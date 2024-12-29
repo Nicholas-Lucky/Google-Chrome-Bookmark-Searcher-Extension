@@ -1,6 +1,24 @@
+/* Extension Background */
 html, body {
     height: 500px;
     width: 750px;
 
     background-color: #caede5;
+}
+
+/* Bookmark Search Box */
+#search-bar input[type=text] {
+  /* VV Not sure why this doesn't fully center the text (it's slightly off-centered to the right) VV
+  display: block;
+  margin: auto; */
+
+  width: 75%;
+  margin-left: 10%;
+  margin-top: 2.5%;
+
+  padding: 11px;
+  border: none;
+  border-radius: 10px;
+
+  font-size: 18px;
 }
