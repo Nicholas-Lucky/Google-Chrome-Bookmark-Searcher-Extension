@@ -1,4 +1,4 @@
-/* Extension Background */
+/* Extension background */
 html, body {
     height: 500px;
     width: 750px;
@@ -6,19 +6,40 @@ html, body {
     background-color: #caede5;
 }
 
-/* Bookmark Search Box */
+/* Bookmark search box */
 #search-bar input[type=text] {
-  /* VV Not sure why this doesn't fully center the text (it's slightly off-centered to the right) VV
+  /* VV this doesn't fully center the text, as the padding adds extra width
+        that "margin: auto" does not seem to adjust for, at least that's my guess
   display: block;
   margin: auto; */
 
   width: 75%;
-  margin-left: 10%;
   margin-top: 2.5%;
+  margin-left: 9.9%;
 
-  padding: 11px;
+  padding: 1.6%;
   border: none;
   border-radius: 10px;
 
   font-size: 18px;
+}
+
+/* Box to house the found bookmarks */
+#results-box {
+    width: 75%;
+    height: 63%;
+    margin-top: 2.5%;
+    margin-left: 9.9%;
+
+    padding: 1.6%;
+    border: none;
+    border-radius: 10px;
+
+    background-color: #badbd4;
+}
+
+/* Text to display the bookmark results */
+p {
+    font-size: 14px;
+    color: #2f3836;
 }
