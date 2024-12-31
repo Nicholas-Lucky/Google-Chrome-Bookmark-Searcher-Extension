@@ -36,6 +36,7 @@ html, body {
     border-radius: 10px;
 
     background-color: #badbd4;
+    overflow-y: auto;
 }
 
 /* Text to display the bookmark results */
