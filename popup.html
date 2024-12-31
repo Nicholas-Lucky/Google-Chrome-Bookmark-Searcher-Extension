@@ -6,6 +6,26 @@ HTML Search Bar: https://www.w3schools.com/howto/howto_css_searchbar.asp
 CSS Padding: https://www.w3schools.com/css/css_padding.asp
 
 CSS Rounded Border Corners: https://www.w3schools.com/css/css3_borders.asp
+
+HTML onload: https://www.w3schools.com/jsref/event_onload.asp
+
+JavaScript EventListener Intro: https://www.w3schools.com/js/js_htmldom_eventlistener.asp
+
+JavaScript EventListener Events: https://www.w3schools.com/jsref/dom_obj_event.asp
+
+HTML (works for JavaScript too) User Input EventListener: https://www.w3schools.com/jsref/event_oninput.asp
+
+JavaScript Change Element: https://www.w3schools.com/js/js_htmldom_html.asp
+
+JavaScript Docstrings: https://stackoverflow.com/questions/34205666/utilizing-docstrings
+
+JavaScript Adding Newlines to HTML: https://stackoverflow.com/questions/19438895/add-a-new-line-in-innerhtml
+
+JavaScript Adding Tabs to HTML: https://stackoverflow.com/questions/24263613/how-to-print-tab-t-inside-a-div-element
+
+CSS Scrollable Div: https://stackoverflow.com/questions/21227287/make-div-scrollable
+
+JavaScript Print All Bookmarks (bulk of my code): https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/bookmarks/getTree
 -->
 
 <!DOCTYPE html>
@@ -21,17 +41,21 @@ CSS Rounded Border Corners: https://www.w3schools.com/css/css3_borders.asp
     </head>
 
     <body>
-        <!-- Make a div to house the search bar -->
+        <!-- Make a div to house (and style) the search bar -->
         <div id="search-bar">
-            <input type="text" placeholder="Search for a bookmark...">
+            <input type="text" id="search-text" placeholder="Search for a bookmark...">
         </div>
 
         <!-- Make a div to house the bookmark results -->
         <div id="results-box">
             <!-- Make the text to display the bookmarks -->
-            <p>Results go here...</p>
+            <p id="results-text">Results go here...</p>
+
+            <!-- VV This doesn't seem to work; it causes an error in the Extensions page -->
+            <!-- <body onload="displayResults()"> -->
         </div>
 
+        <!-- Use javascript for the bookmark searching -->
         <script src="script.js"></script>
     </body>
 
