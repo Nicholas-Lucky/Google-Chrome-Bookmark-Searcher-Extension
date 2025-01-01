@@ -113,65 +113,146 @@ function displayBookmarks() {
  *                              (organized similar to a linked list kind of)
  */
 function searchForBookmarks(bookmarkNode, currentArray) {
+    /* bookmarkNode only has a url if it is a bookmark and not a folder, so, from what I have seen,
+     * this if-condition will pass if bookmarkNode is a folder */
     if (bookmarkNode.url) {
+        // Get the relevant information, converted to lowercase since the bookmark search (for now) will not be case-sensitive
         let title = bookmarkNode.title.toLowerCase();
         let searched = searchText.value.toLowerCase();
+
+        // 3. While traversing through a bookmark, check if a part of its title is included in the search bar
+        // Add the bookmark to currentArray if it contains searched (searchText) in its title
         if (title.indexOf(searched) != -1)
             currentArray.push(bookmarkNode);
     }
 
+    // Recursively traverse to bookmarkNode's children nodes, if bookmarkNode has any
     if (bookmarkNode.children) {
         for (let i = 0; i < bookmarkNode.children.length; i++)
             searchForBookmarks(bookmarkNode.children[i], currentArray);
     }
 }
 
+/**
+ * Converts an array of bookmarks to an HTML list containing the bookmarks' titles, their links (linked to the
+ * titles), and their parent folder (if it exists).
+ *
+ * @param {Object} bookmarksArray An array containing the bookmarks that contain the user's input, searchText,
+ *                                in their titles.
+ *
+ * @return {String}               An HTML-formatted list, formattedText, containing information on the bookmarks
+ *                                in bookmarksArray.
+ *CHANGE
+ * Time complexity: O(c_total);   c_total = total # of characters across all bookmark titles in bookmarksArray
+ *                                We need to traverse through each character in each title of each bookmark.
+ *            or...
+ *CHANGE
+ * Time complexity: O(n * c_ave); n = # of bookmarks; c_ave = average # of characters in a bookmark title
+ *                                Similar to O(c_total), in this case I am assuming that c_total = n * c_ave.
+ *CAHNGE
+ * Space complexity: O(1);        formatBookmarksToHTML does not call any other functions, so the only "call"
+ *                                that would exist as a result of this function is formatBookmarksToHTML itself.
+ */
 function formatBookmarksToHTML(bookmarksArray) {
+    // HTML-formatted list to be returned
     let formattedText = "";
 
+    // Format every bookmark in bookmarksArray to formattedText
     for (let i = 0; i < bookmarksArray.length; i++) {
+        // Add newlines to separate bookmark entries
         if (i != 0)
-            formattedText += "<br><br>"
+            formattedText += "<br><br>";
 
-
-
+        // Get the relevant information
         let title = bookmarksArray[i].title;
         let url = bookmarksArray[i].url;
 
-        let linkOpeningTag = "<a href=" + '"' + url + '">';
+        // Make the link (<a>) tags
+        let linkOpeningTag = `<a href="${url}">`;
         let linkClosingTag = "</a>";
 
-        formattedText += linkOpeningTag;
+        // Make the formatted title (part of the title containing searchText will be bolded)
+        let formattedTitle = "";
 
-        let start = title.toLowerCase().indexOf(searchText.value.toLowerCase());
-        let end = start + searchText.value.length;
+        // Find searchText in title (the indices in which searchText begins and ends)
+        let boldStartingIndex = title.toLowerCase().indexOf(searchText.value.toLowerCase());
+        let boldEndingIndex = boldStartingIndex + searchText.value.length - 1;
 
-        for (let j = 0; j < start; j++)
-            formattedText += title[j];
+        for (let j = 0; j < title.length; j++) {
+            // Add the opening bold tag for the "searchText portion" of the title
+            if (j == boldStartingIndex)
+                formattedTitle += "<b>";
 
-        let bold = "<b>";
-        for (let j = start; j < end; j++)
-            bold += title[j];
+            formattedTitle += title[j];
 
-        bold += "</b>";
+            // Add the closing bold tag for the "searchText portion" of the title
+            if (j == boldEndingIndex)
+                formattedTitle += "</b>";
+        }
 
-        formattedText += bold;
+        // Find the parent folder(s) of bookmarksArray[i], if it exists
+        let parentFolders = [];
+        getParentFolders(bookmarksArray[i], parentFolders);
+        console.log(`AY ${parentFolders.length}`);
+        // Format the parent folders into HTML
+        let formattedParentFolders = "";
+        for (let j = 0; j < formattedParentFolders.length; j++) {
+            // Add an extra indent for each proceeding parent
+            let indents = "&emsp;".repeat(j + 1);
 
-        for (let k = end; k < title.length; k++)
-            formattedText += title[k];
+            formattedParentFolders += `<br>;${indents}In: ${formattedParentFolders[j]}`;
+        }
 
-        //formattedText += bookmarksArray[i].title;
-        formattedText += linkClosingTag;
-
-        /*
-        formattedText += bookmarksArray[i].title;
-
-        formattedText += "<br>";
-        formattedText += "&emsp;";
-
-        formattedText += bookmarksArray[i].url;
-        */
+        // Make the HTML-formatted bookmark entry, and add it to formattedText
+        let bookmarkEntry = linkOpeningTag + formattedTitle + linkClosingTag + formattedParentFolders;
+        formattedText += bookmarkEntry;
     }
 
     return formattedText;
+}
+
+/**
+ * Retrieves the folder(s) an inputted bookmark is housed in.
+ *
+ * @param {Object} bookmarkNode A bookmark/folder in Google Chrome's bookmark tree (Google Chrome stores
+ *                              bookmarks in a tree). chrome for developers defines this to be of type
+ *                              BookmarkTreeNode.
+ *
+ * @param {Object} parentsArray An array containing the parent, grandparent, etc. folders of the initially
+ *                              inputted bookmarkNode. Will be added to throughout the course of the function,
+ *                              with each element being the parent folder of the element to its left.
+ *
+ * @return {void}               getParentFolders does not return a value, however it may mutate parentsArray
+ *                              if parent folders are found for bookmarkNode.
+ *
+ * Time complexity: O(n);       n = # of saved bookmarks
+ *                              In the worst case, the bookmarks are the sole children/parents of one another
+ *                              (organized similar to a linked list kind of)
+ *
+ * Space complexity: O(n);      n = # of saved bookmarks
+ *                              In the worst case, the bookmarks are the sole children/parents of one another
+ *                              (organized similar to a linked list kind of)
+ */
+function getParentFolders(bookmarkNode, parentsArray) {
+    // Check if bookmarkNode has a parent folder
+    if (bookmarkNode.parentId) {
+        // If so, add the parent folder to parentsArray
+        /*chrome.bookmarks.get(bookmarkNode.parentId, function(data) {
+            parentsArray.push(data[0].title);
+            console.log(`GOT HERE ${parentsArray.length}`);
+            // Traverse up into the parent folder to look for its parent folder (if it exists)
+            getParentFolders(data[0], parentsArray);
+        });*/
+
+        let test = chrome.bookmarks.get(bookmarkNode.parentId);
+        test.then (
+            function(value) {
+                parentsArray.push(value[0].title);
+                console.log(`GOT HERE ${parentsArray.length}`);
+                getParentFolders(value[0], parentsArray);
+            }
+        );
+    }
+
+    console.log(`FINAL LENGTH: ${parentsArray.length}`);
 }
