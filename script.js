@@ -45,6 +45,8 @@
 
 
 
+let currentSearchID = 0;
+
 // Get the relevant elements
 const searchText = document.getElementById("search-text");
 const resultsText = document.getElementById("results-text");
@@ -64,7 +66,8 @@ searchText.addEventListener("input", displayBookmarks);
  *                resultsText if any bookmarks are found to have searchText in their titles.
  */
 async function displayBookmarks() {
-    searchText.removeEventListener("input", displayBookmarks);
+    currentSearchID++;
+    let functionCallID = currentSearchID;
 
     // Return to the default "placeholder" text if the user removes their input from the search bar
     if (searchText.value == "")
@@ -87,11 +90,12 @@ async function displayBookmarks() {
             await searchForBookmarks(fullTree[0], bookmarksArray);
 
             // Display the found bookmarks to resultsText
-            resultsText.innerHTML = await formatBookmarksToHTML(bookmarksArray);
+            let formattedHTMLText = await formatBookmarksToHTML(bookmarksArray);
+
+            if (functionCallID == currentSearchID)
+                resultsText.innerHTML = formattedHTMLText;
         });
     }
-
-    searchText.addEventListener("input", displayBookmarks);
 }
 
 /**
