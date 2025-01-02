@@ -62,7 +62,7 @@ searchText.addEventListener("input", displayBookmarks);
  * @return {void} displayBookmarks does not return a value, however it may mutate
  *                resultsText if any bookmarks are found to have searchText in their titles.
  */
-function displayBookmarks() {
+async function displayBookmarks() {
     // Return to the default "placeholder" text if the user removes their input from the search bar
     if (searchText.value == "")
         resultsText.innerHTML = "Results go here...";
@@ -77,14 +77,14 @@ function displayBookmarks() {
          *       will stick with this function() method, where we specify a function
          *       to use the return value of getTree() after the Promise has been
          *       fulfilled */
-        chrome.bookmarks.getTree(function(fullTree) {
+        chrome.bookmarks.getTree(async function(fullTree) {
             // 2. Google Chrome's bookmarks are stored in a tree; traverse through all bookmarks
             // Store the bookmarks in an array!
             let bookmarksArray = [];
             searchForBookmarks(fullTree[0], bookmarksArray);
 
             // Display the found bookmarks to resultsText
-            resultsText.innerHTML = formatBookmarksToHTML(bookmarksArray);
+            resultsText.innerHTML = await formatBookmarksToHTML(bookmarksArray);
         });
     }
 }
@@ -140,7 +140,7 @@ function searchForBookmarks(bookmarkNode, currentArray) {
  * @param {Object} bookmarksArray An array containing the bookmarks that contain the user's input, searchText,
  *                                in their titles.
  *
- * @return {String}               An HTML-formatted list, formattedText, containing information on the bookmarks
+ * @return {Promise}               An HTML-formatted list, formattedText, containing information on the bookmarks
  *                                in bookmarksArray.
  *CHANGE
  * Time complexity: O(c_total);   c_total = total # of characters across all bookmark titles in bookmarksArray
@@ -153,7 +153,7 @@ function searchForBookmarks(bookmarkNode, currentArray) {
  * Space complexity: O(1);        formatBookmarksToHTML does not call any other functions, so the only "call"
  *                                that would exist as a result of this function is formatBookmarksToHTML itself.
  */
-function formatBookmarksToHTML(bookmarksArray) {
+async function formatBookmarksToHTML(bookmarksArray) {
     // HTML-formatted list to be returned
     let formattedText = "";
 
@@ -192,20 +192,22 @@ function formatBookmarksToHTML(bookmarksArray) {
 
         // Find the parent folder(s) of bookmarksArray[i], if it exists
         let parentFolders = [];
-        getParentFolders(bookmarksArray[i], parentFolders);
-        console.log(`AY ${parentFolders.length}`);
+        await getParentFolders(bookmarksArray[i], parentFolders, 0);
+        console.log(`AY ${parentFolders.length} hmm ${parentFolders[0]}`);
         // Format the parent folders into HTML
         let formattedParentFolders = "";
-        for (let j = 0; j < formattedParentFolders.length; j++) {
+        for (let j = 0; j < parentFolders.length - 1; j++) {
+
             // Add an extra indent for each proceeding parent
             let indents = "&emsp;".repeat(j + 1);
 
-            formattedParentFolders += `<br>;${indents}In: ${formattedParentFolders[j]}`;
+            formattedParentFolders += `<br>${indents}In: ${parentFolders[j]}`;
         }
 
         // Make the HTML-formatted bookmark entry, and add it to formattedText
         let bookmarkEntry = linkOpeningTag + formattedTitle + linkClosingTag + formattedParentFolders;
         formattedText += bookmarkEntry;
+
     }
 
     return formattedText;
@@ -233,7 +235,7 @@ function formatBookmarksToHTML(bookmarksArray) {
  *                              In the worst case, the bookmarks are the sole children/parents of one another
  *                              (organized similar to a linked list kind of)
  */
-function getParentFolders(bookmarkNode, parentsArray) {
+async function getParentFolders(bookmarkNode, parentsArray, i) {
     // Check if bookmarkNode has a parent folder
     if (bookmarkNode.parentId) {
         // If so, add the parent folder to parentsArray
@@ -244,14 +246,12 @@ function getParentFolders(bookmarkNode, parentsArray) {
             getParentFolders(data[0], parentsArray);
         });*/
 
-        let test = chrome.bookmarks.get(bookmarkNode.parentId);
-        test.then (
-            function(value) {
-                parentsArray.push(value[0].title);
-                console.log(`GOT HERE ${parentsArray.length}`);
-                getParentFolders(value[0], parentsArray);
-            }
-        );
+        let parentFolder = await chrome.bookmarks.get(bookmarkNode.parentId);
+
+        parentsArray.push(parentFolder[0].title);
+        console.log(`GOT HERE ${parentsArray.length} AND ALSO ${i}`);
+        await getParentFolders(parentFolder[0], parentsArray, 50); // TODO: CHECK
+        console.log("RAHHHH");
     }
 
     console.log(`FINAL LENGTH: ${parentsArray.length}`);
