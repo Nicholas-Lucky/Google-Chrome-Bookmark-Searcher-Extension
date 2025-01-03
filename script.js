@@ -144,23 +144,28 @@ function searchForBookmarks(bookmarkNode, currentArray) {
 
 /**
  * Converts an array of bookmarks to an HTML list containing the bookmarks' titles, their links (linked to the
- * titles), and their parent folder (if it exists).
+ * titles), and the folder(s) they are in (if it/they exist(s)).
  *
- * @param {Object} bookmarksArray An array containing the bookmarks that contain the user's input, searchText,
- *                                in their titles.
+ * @param {Object} bookmarksArray   An array containing the bookmarks that contain the user's input, searchText,
+ *                                  in their titles.
  *
- * @return {Promise}               An HTML-formatted list, formattedText, containing information on the bookmarks
- *                                in bookmarksArray.
- *CHANGE
- * Time complexity: O(c_total);   c_total = total # of characters across all bookmark titles in bookmarksArray
- *                                We need to traverse through each character in each title of each bookmark.
+ * @return {Promise}                An HTML-formatted list, formattedText, containing information on the bookmarks
+ *                                  in bookmarksArray. formatBookmarksToHTML is an async function, so it can be run
+ *                                  in the background, causing its return value to temporarily be a Promise; upon
+ *                                  resolution, the return value should be a string {String}.
+ *
+ * Time complexity: O(n * c_total); c_total = total # of characters across all bookmark titles in bookmarksArray
+ *                                  We need to traverse through each character in each title of each bookmark, with
+ *                                  each title calling getParentFolders, which itself has a time complexity of O(n).
  *            or...
- *CHANGE
- * Time complexity: O(n * c_ave); n = # of bookmarks; c_ave = average # of characters in a bookmark title
- *                                Similar to O(c_total), in this case I am assuming that c_total = n * c_ave.
- *CAHNGE
- * Space complexity: O(1);        formatBookmarksToHTML does not call any other functions, so the only "call"
- *                                that would exist as a result of this function is formatBookmarksToHTML itself.
+ *
+ * Time complexity: O(n^2 * c_ave); n = # of bookmarks; c_ave = average # of characters in a bookmark title
+ *                                  Similar to O(n * c_total), in this case I am assuming that c_total = n * c_ave.
+ *
+ * Space complexity: O(n);          n = # of saved bookmarks
+ *                                  formatBookmarksToHTML does call getParentFolders, which has a space complexity
+ *                                  of O(n). Otherwise, however, I don't think formatBookmarksToHTML adds more to
+ *                                  the call stack other than it's initial function call.
  */
 async function formatBookmarksToHTML(bookmarksArray) {
     // HTML-formatted list to be returned
@@ -186,7 +191,8 @@ async function formatBookmarksToHTML(bookmarksArray) {
         // Find searchText in title (the indices in which searchText begins and ends)
         let boldStartingIndex = title.toLowerCase().indexOf(searchText.value.toLowerCase());
         let boldEndingIndex = boldStartingIndex + searchText.value.length - 1;
-        console.log(`SEARCHTEXT RN: ${searchText.value}`);
+
+        // Go through each character in title
         for (let j = 0; j < title.length; j++) {
             // Add the opening bold tag for the "searchText portion" of the title
             if (j == boldStartingIndex)
@@ -199,41 +205,40 @@ async function formatBookmarksToHTML(bookmarksArray) {
                 formattedTitle += "</b>";
         }
 
-        // Find the parent folder(s) of bookmarksArray[i], if it exists
-        let parentFolders = await getParentFolders(bookmarksArray[i], []);
-        console.log(`AY ${parentFolders.length} hmm ${parentFolders[0]}`);
+        // Find the folder(s) bookmarksArray[i] is in, if it/they exist(s)
+        let parentFolders = await getParentFolders(bookmarksArray[i]);
+
         // Format the parent folders into HTML
         let formattedParentFolders = "";
         for (let j = 0; j < parentFolders.length - 1; j++) {
-
             // Add an extra indent for each proceeding parent
             let indents = "&emsp;".repeat(j + 1);
 
+            // Format the parent folder into formattedParentFolders
             formattedParentFolders += `<br>${indents}In: ${parentFolders[j]}`;
         }
 
         // Make the HTML-formatted bookmark entry, and add it to formattedText
         let bookmarkEntry = linkOpeningTag + formattedTitle + linkClosingTag + formattedParentFolders;
         formattedText += bookmarkEntry;
-
     }
 
+    // At this point, our HTML-formatted bookmarks are ready!
     return formattedText;
 }
 
 /**
- * Retrieves the folder(s) an inputted bookmark is housed in.
+ * Recursively retrieves the folder(s) an inputted bookmark is housed in.
  *
  * @param {Object} bookmarkNode A bookmark/folder in Google Chrome's bookmark tree (Google Chrome stores
  *                              bookmarks in a tree). chrome for developers defines this to be of type
  *                              BookmarkTreeNode.
  *
- * @param {Object} parentsArray An array containing the parent, grandparent, etc. folders of the initially
- *                              inputted bookmarkNode. Will be added to throughout the course of the function,
- *                              with each element being the parent folder of the element to its left.
- *
- * @return {Object}               getParentFolders does not return a value, however it may mutate parentsArray
- *                              if parent folders are found for bookmarkNode.
+ * @return {Promise}            parentsArray, an array containing the folders bookmarkNode is in. An element
+ *                              in parentsArray is the parent folder of an element to its left, and is a
+ *                              child folder of an element to its right. getParentFolders is an async function,
+ *                              so it can be run in the background, causing its return value to temporarily
+ *                              be a Promise; upon resolution, the return value should be an array {Object}.
  *
  * Time complexity: O(n);       n = # of saved bookmarks
  *                              In the worst case, the bookmarks are the sole children/parents of one another
@@ -243,30 +248,26 @@ async function formatBookmarksToHTML(bookmarksArray) {
  *                              In the worst case, the bookmarks are the sole children/parents of one another
  *                              (organized similar to a linked list kind of)
  */
-async function getParentFolders(bookmarkNode, parentsArray) {
-
-    console.log(`OKAY: ${parentsArray.length}`);
-
+async function getParentFolders(bookmarkNode) {
     // Check if bookmarkNode has a parent folder
     if (bookmarkNode.parentId) {
-        // If so, add the parent folder to parentsArray
+        // If so, add the parent folder of bookmarkNode to parentsArray
         let parentFolder = await chrome.bookmarks.get(bookmarkNode.parentId);
 
-        let test = [parentFolder[0].title];
-        parentsArray.push(1);
-        let parentsOfParents = await getParentFolders(parentFolder[0], parentsArray);
+        // Make an array to house the folders bookmarkNode is in
+        let parentsArray = [parentFolder[0].title];
 
-        for (let i = 0; i < parentsOfParents.length; i++) {
-            console.log(`PUSHING ${parentsOfParents[i]}`);
-            test.push(parentsOfParents[i]);
-        }
+        // Recursively retrieve an array containing the folders parentFolder is in
+        let parentsOfParents = await getParentFolders(parentFolder[0]);
 
-        return test;
-        /*
-        parentsArray.push(parentFolder[0].title);
-        await getParentFolders(parentFolder[0], parentsArray, 50);*/
+        // Add the parent folders of parentsOfParents to parentsArray
+        for (let i = 0; i < parentsOfParents.length; i++)
+            parentsArray.push(parentsOfParents[i]);
+
+        // At this point, we should have all the folders bookmarkNode is in!
+        return parentsArray;
     }
 
-    // Otherwise, return an empty array
+    // Otherwise, return an empty array (base case)
     return [];
 }
