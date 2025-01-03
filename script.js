@@ -13,14 +13,32 @@ searchText.addEventListener("input", displayBookmarks);
  * Uses the user's input into the extension search bar, searchText, searches for bookmarks that
  * contain searchText in their titles, and displays the bookmarks to resultsText.
  *
- *                   displayBookmarks does not require any parameters.
+ *                                      displayBookmarks does not require any parameters.
  *
- * @return {Promise} displayBookmarks does not return a value, however it may mutate
- *                   resultsText if any bookmarks are found to have searchText in their titles.
- *                   While displayBookmarks is not meant to return a value, however, it is an
- *                   asynchronous (async) function, so it will by default return a Promise.
+ * @return {Promise}                    displayBookmarks does not return a value, however it may mutate
+ *                                      resultsText if any bookmarks are found to have searchText in their titles.
+ *                                      While displayBookmarks is not meant to return a value, however, it is an
+ *                                      asynchronous (async) function, so it will return a Promise by default.
  *
- * TODO: TIME AND SPACE COMPLEXITIES
+ * Time complexity: O(n + n * c_total); n = # of bookmarks; c_total = total # of characters across all bookmark titles
+ *                                                                    in bookmarksArray
+ *                                      displayBookmarks calls the searchForBookmarks function, which has a time
+ *                                      complexity of O(n), and then calls the formatBookmarksToHTML function, which
+ *                                      has a time complexity of O(n * c_total). Note: At this moment, I am unsure
+ *                                      of the time complexity of chrome.bookmarks.getTree(), which may or may not
+ *                                      affect the overall time complexity of displayBookmarks.
+ *            or...
+ *
+ * Time complexity: O(n + n^2 * c_ave); n = # of bookmarks; c_ave = average # of characters in a bookmark title
+ *                                      Similar to O(n + n * c_total), in this case I am assuming that
+ *                                      c_total = n * c_ave.
+ *
+ * Space complexity: O(n);              n = # of saved bookmarks
+ *                                      displayBookmarks calls the searchForBookmarks function, which has a space
+ *                                      complexity of O(n), and then calls the formatBookmarksToHTML function, which
+ *                                      also has a space complexity of O(n). Note: At this moment, I am unsure
+ *                                      of the space complexity of chrome.bookmarks.getTree(), which may or may not
+ *                                      affect the overall space complexity of displayBookmarks.
  */
 async function displayBookmarks() {
     /* Increment currentSearchID, and set functionCallID to currentSearchID; we will use these two variables
@@ -91,13 +109,17 @@ async function displayBookmarks() {
  *                              (organized similar to a linked list kind of)
  */
 function searchForBookmarks(bookmarkNode) {
-    // Make an array to store the bookmarks that have been matched with the search bar input
+    /* Make an array to store the bookmarks that have been matched with the search bar input
+     *
+     * Note: If bookmarkNode is not a bookmark, and does not have any children, then foundBookmarks
+     * will remain and be returned as an empty array ([]), which will be our base case. */
     let foundBookmarks = [];
 
     /* bookmarkNode only has a url if it is a bookmark and not a folder, so, from what I have seen,
      * this if-condition will pass if bookmarkNode is a folder */
     if (bookmarkNode.url) {
-        // Get the relevant information, converted to lowercase since the bookmark search (for now) will not be case-sensitive
+        /* Get the relevant information
+         * Convert the information to lowercase, since the bookmark search (for now) will not be case-sensitive */
         let title = bookmarkNode.title.toLowerCase();
         let searched = searchText.value.toLowerCase();
 
@@ -135,7 +157,9 @@ function searchForBookmarks(bookmarkNode) {
  *                                  so it can be run in the background, causing its return value to temporarily be
  *                                  a Promise; upon resolution, the return value should be a string {String}.
  *
- * Time complexity: O(n * c_total); c_total = total # of characters across all bookmark titles in bookmarksArray
+ * Time complexity: O(n * c_total); n = # of bookmarks; c_total = total # of characters across all bookmark titles
+ *                                                                in bookmarksArray
+ *
  *                                  We need to traverse through each character in each title of each bookmark, with
  *                                  each title calling getParentFolders, which itself has a time complexity of O(n).
  *            or...
@@ -180,6 +204,7 @@ async function formatBookmarksToHTML(bookmarksArray) {
             if (j == boldStartingIndex)
                 formattedTitle += "<b>";
 
+            // Add a title character to formattedTitle
             formattedTitle += title[j];
 
             // Add the closing bold tag for the "searchText portion" of the title
