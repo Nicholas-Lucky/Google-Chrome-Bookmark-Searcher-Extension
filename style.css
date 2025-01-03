@@ -1,27 +1,28 @@
-/* Extension background */
+/* Extension window and background */
 html, body {
     height: 500px;
     width: 750px;
 
-    background-color: #caede5;
+    background-image: url("images/ocean-background.png");
+    /* background-color: #caede5; */
 }
 
 /* Bookmark search box */
 #search-bar input[type=text] {
-  /* VV this doesn't fully center the text, as the padding adds extra width
+    /* VV this doesn't fully center the text, as the padding adds extra width
         that "margin: auto" does not seem to adjust for, at least that's my guess
-  display: block;
-  margin: auto; */
+    display: block;
+    margin: auto; */
 
-  width: 75%;
-  margin-top: 2.5%;
-  margin-left: 9.9%;
+    width: 75%;
+    margin-top: 2.5%;
+    margin-left: 9.9%;
 
-  padding: 1.6%;
-  border: none;
-  border-radius: 10px;
+    padding: 1.6%;
+    border: none;
+    border-radius: 10px;
 
-  font-size: 18px;
+    font-size: 18px;
 }
 
 /* Box to house the found bookmarks */
@@ -42,5 +43,10 @@ html, body {
 /* Text to display the bookmark results */
 p {
     font-size: 14px;
-    color: #2f3836;
+    color: #324d47;
+}
+
+/* Links that link the bookmark results to their respective pages */
+a {
+    color: #3e7a6e;
 }
