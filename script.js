@@ -1,50 +1,4 @@
-        //resultsText.innerHTML = searchText.value + "<br>" + "&emsp;" + "HEY";
-
-        //let bookmarkTitles = [];
-        //let bookmarkURLS = [];
-        /*
-        chrome.bookmarks.search(searchText.value, function (data) {
-            let finalText = "";
-            for (let i = 0; i < data.length; i++) {
-
-                if (data[i].title.indexOf(searchText.value) == -1)
-                    continue;
-
-                if (i != 0)
-                    finalText += "<br><br>"
-
-                finalText += data[i].title;
-
-                finalText += "<br>";
-                finalText += "&emsp;";
-
-                finalText += data[i].url;
-
-                //bookmarkTitles.push(data[i].title);
-                //bookmarkURLS.push(data[i].url);
-            }
-
-            resultsText.innerHTML = finalText;
-        });*/
-
-// 1. Event listener for the search bar (not sure if this would happen if the user enters or if there is ANY input yk)
-
-// 2. Google's bookmarks are stored in a tree, gotta traverse through all bookmarks
-
-// 3. While traversing through bookmarks, check if the... name?? is included in the search bar (idk about keywords yet)
-
-// 4. If the name is in the search bar, add it to the results text somehow idk
-
-// 5. Somehow allow this process to occur continuously in case the user searches diff things (rn assuming that this happens automatically)
-
-// Do we store the bookmarks in a list??
-
-
-
-
-
-
-
+// Counter used for checking the latest search entered by the user (mainly used in displayBookmarks for now)
 let currentSearchID = 0;
 
 // Get the relevant elements
@@ -53,19 +7,34 @@ const resultsText = document.getElementById("results-text");
 
 // 1. Event listener for the search bar (waits for ANY input in the search bar)
 // Wait for user input (in which case, search for bookmarks)
-
 searchText.addEventListener("input", displayBookmarks);
 
 /**
  * Uses the user's input into the extension search bar, searchText, searches for bookmarks that
  * contain searchText in their titles, and displays the bookmarks to resultsText.
  *
- *                displayBookmarks does not require any parameters.
+ *                   displayBookmarks does not require any parameters.
  *
- * @return {void} displayBookmarks does not return a value, however it may mutate
- *                resultsText if any bookmarks are found to have searchText in their titles.
+ * @return {Promise} displayBookmarks does not return a value, however it may mutate
+ *                   resultsText if any bookmarks are found to have searchText in their titles.
+ *                   While displayBookmarks is not meant to return a value, however, it is an
+ *                   asynchronous (async) function, so it will by default return a Promise.
+ *
+ * TODO: TIME AND SPACE COMPLEXITIES
  */
 async function displayBookmarks() {
+    /* Increment currentSearchID, and set functionCallID to currentSearchID; we will use these two variables
+     * to confirm whether this current call to displayBookmarks is the latest call that has been made at
+     * a given moment, as we want to display the results of the latest search to the extension window.
+     *
+     * This is needed because searching and displaying the results of different searches may take different
+     * amounts of time. In addition, many of the functions for this extension are asynchronous (async) functions,
+     * meaning that these functions can run in the background of the extension. As a result, there may be a
+     * situation in which a search is made, and then a second search is made immediately after the first search.
+     * If the first search takes longer to search and display its results than the second search, then, it may
+     * be possible for the results of the second search to be displayed first, and for the results of the first
+     * search to then override the second search's results with its later display. For now, we want our extension
+     * to display the results of the latest search, so we would want to avoid this situation. */
     currentSearchID++;
     let functionCallID = currentSearchID;
 
@@ -77,42 +46,42 @@ async function displayBookmarks() {
     else {
         /* Get the entire bookmarks tree, and the root node
          *
-         * Note: It seems that getTree() returns a Promise, meaning the return value
-         *       may not be immediately given. I've seen that there are multiple ways
-         *       to work with this, like with the .then keyword, however for now I
-         *       will stick with this function() method, where we specify a function
-         *       to use the return value of getTree() after the Promise has been
-         *       fulfilled */
-        await chrome.bookmarks.getTree(async function(fullTree) {
-            // 2. Google Chrome's bookmarks are stored in a tree; traverse through all bookmarks
-            // Store the bookmarks in an array!
-            let bookmarksArray = [];
-            await searchForBookmarks(fullTree[0], bookmarksArray);
+         * Note: It seems that getTree() returns a Promise, meaning the return value may not be immediately
+         *       given. I previously used a function() method, where we specify a function to use the return
+         *       value of getTree() after the Promise has been fulfilled, however I have changed the code
+         *       to now have a variable store the return value of getTree(), and use the await keyword to
+         *       allow us to retrieve the return value of getTree() before moving on. */
+        let bookmarkTree = await chrome.bookmarks.getTree();
 
+        // 2. Google Chrome's bookmarks are stored in a tree; traverse through all bookmarks
+        // Find the bookmarks whose titles contain searchText, and store them in an array!
+        let bookmarksArray = searchForBookmarks(bookmarkTree[0]);
+
+        // Format bookmarksArray into an HTML list we can display
+        let formattedHTMLText = await formatBookmarksToHTML(bookmarksArray);
+
+        /* Make sure we are still on the latest call of displayBookmarks (if later calls of displayBookmarks occurred
+         * while this current displayBookmarks call was running, currentSearchID would have been incremented, making
+         * it no longer equal to functionCallID) */
+        if (functionCallID == currentSearchID)
             // Display the found bookmarks to resultsText
-            let formattedHTMLText = await formatBookmarksToHTML(bookmarksArray);
-
-            if (functionCallID == currentSearchID)
-                resultsText.innerHTML = formattedHTMLText;
-        });
+            resultsText.innerHTML = formattedHTMLText;
     }
 }
 
 /**
- * Uses the user's input into the extension search bar, searchText, searches for bookmarks that contain
- * searchText in their titles, and displays the bookmarks to resultsText. Traverses through each bookmark
- * and folder via recursion, in a preorder traversal style (I think, since we start with a parent node
- * first, and then traverse to the node's children before moving onto sibling nodes).
+ * Uses the user's input into the extension search bar, searchText, and searches for bookmarks that contain
+ * searchText in their titles. Traverses through each bookmark and folder via recursion, in a preorder
+ * traversal style (I think, since we start with a parent node first, and then traverse to the node's
+ * children before moving onto sibling nodes).
  *
  * @param {Object} bookmarkNode A bookmark/folder in Google Chrome's bookmark tree (Google Chrome stores
  *                              bookmarks in a tree). chrome for developers defines this to be of type
  *                              BookmarkTreeNode.
  *
- * @param {Object} currentArray An array containing the bookmarks that contain the user's input, searchText,
- *                              in their titles. Will be added to throughout the course of the function.
- *
- * @return {void}               searchForBookmarks does not return a value, however it may mutate currentArray
- *                              if any bookmarks are found to have searchText in their titles.
+ * @return {Object}             foundBookmarks, an array containing the bookmarks that are found to have
+ *                              searchText in their titles. The bookmarks in the array are defined by
+ *                              chrome for developers to be of type BookmarkTreeNode.
  *
  * Time complexity: O(n);       n = # of saved bookmarks
  *                              We need to traverse through all nodes in the bookmark tree.
@@ -121,7 +90,10 @@ async function displayBookmarks() {
  *                              In the worst case, the bookmarks are the sole children/parents of one another
  *                              (organized similar to a linked list kind of)
  */
-function searchForBookmarks(bookmarkNode, currentArray) {
+function searchForBookmarks(bookmarkNode) {
+    // Make an array to store the bookmarks that have been matched with the search bar input
+    let foundBookmarks = [];
+
     /* bookmarkNode only has a url if it is a bookmark and not a folder, so, from what I have seen,
      * this if-condition will pass if bookmarkNode is a folder */
     if (bookmarkNode.url) {
@@ -130,16 +102,25 @@ function searchForBookmarks(bookmarkNode, currentArray) {
         let searched = searchText.value.toLowerCase();
 
         // 3. While traversing through a bookmark, check if a part of its title is included in the search bar
-        // Add the bookmark to currentArray if it contains searched (searchText) in its title
+        // Add the bookmark to foundBookmarks if it contains searched (searchText) in its title
         if (title.indexOf(searched) != -1)
-            currentArray.push(bookmarkNode);
+            foundBookmarks.push(bookmarkNode);
     }
 
     // Recursively traverse to bookmarkNode's children nodes, if bookmarkNode has any
     if (bookmarkNode.children) {
-        for (let i = 0; i < bookmarkNode.children.length; i++)
-            searchForBookmarks(bookmarkNode.children[i], currentArray);
+        for (let i = 0; i < bookmarkNode.children.length; i++) {
+            // Get any children bookmarks whose titles are matched with the search bar input
+            let childrenBookmarks = searchForBookmarks(bookmarkNode.children[i]);
+
+            // Add the matched children bookmarks to foundBookmarks
+            for (let j = 0; j < childrenBookmarks.length; j++)
+                foundBookmarks.push(childrenBookmarks[j]);
+        }
     }
+
+    // Return the found bookmarks!
+    return foundBookmarks;
 }
 
 /**
@@ -150,9 +131,9 @@ function searchForBookmarks(bookmarkNode, currentArray) {
  *                                  in their titles.
  *
  * @return {Promise}                An HTML-formatted list, formattedText, containing information on the bookmarks
- *                                  in bookmarksArray. formatBookmarksToHTML is an async function, so it can be run
- *                                  in the background, causing its return value to temporarily be a Promise; upon
- *                                  resolution, the return value should be a string {String}.
+ *                                  in bookmarksArray. formatBookmarksToHTML is an asynchronous (async) function,
+ *                                  so it can be run in the background, causing its return value to temporarily be
+ *                                  a Promise; upon resolution, the return value should be a string {String}.
  *
  * Time complexity: O(n * c_total); c_total = total # of characters across all bookmark titles in bookmarksArray
  *                                  We need to traverse through each character in each title of each bookmark, with
@@ -171,6 +152,7 @@ async function formatBookmarksToHTML(bookmarksArray) {
     // HTML-formatted list to be returned
     let formattedText = "";
 
+    // 4. If a bookmark title is in the search bar, add it to the results text
     // Format every bookmark in bookmarksArray to formattedText
     for (let i = 0; i < bookmarksArray.length; i++) {
         // Add newlines to separate bookmark entries
@@ -236,9 +218,10 @@ async function formatBookmarksToHTML(bookmarksArray) {
  *
  * @return {Promise}            parentsArray, an array containing the folders bookmarkNode is in. An element
  *                              in parentsArray is the parent folder of an element to its left, and is a
- *                              child folder of an element to its right. getParentFolders is an async function,
- *                              so it can be run in the background, causing its return value to temporarily
- *                              be a Promise; upon resolution, the return value should be an array {Object}.
+ *                              child folder of an element to its right. getParentFolders is an asynchronous
+ *                              (async) function, so it can be run in the background, causing its return value
+ *                              to temporarily be a Promise; upon resolution, the return value should be an
+ *                              array {Object}.
  *
  * Time complexity: O(n);       n = # of saved bookmarks
  *                              In the worst case, the bookmarks are the sole children/parents of one another
