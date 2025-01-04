@@ -1,3 +1,5 @@
+/* ----------------------------- VVV Bookmark Search Implementation VVV ----------------------------- */
+
 // Counter used for checking the latest search entered by the user (mainly used in displayBookmarks for now)
 let currentSearchID = 0;
 
@@ -278,4 +280,85 @@ async function getParentFolders(bookmarkNode) {
 
     // Otherwise, return an empty array (base case)
     return [];
+}
+
+
+
+/* ----------------------------- VVV Theme Toggle Implementation VVV ----------------------------- */
+
+// Current theme the extension is in (set to sky when the extension is installed)
+let currentTheme = "sky";
+
+// Array to house the theme backgrounds: [skyColor, nightColor]
+let themeBackgrounds = ["url('backgrounds/sky.png')", "url('backgrounds/night.png')"];
+
+// Arrays to house the colors used for the results page: [skyColor, nightColor]
+let resultsPageBackgroundColors = ["#badbd4"];
+let resultsTextColors = ["#324d47"];
+let resultsLinkColors = ["#3e7a6e"];
+
+// Get the relevant elements
+const cloud = document.getElementById("cloud");
+const moon = document.getElementById("moon");
+
+cloud.addEventListener("mouseover", cloudHovered);
+cloud.addEventListener("mouseout", cloudUnhovered);
+cloud.addEventListener("click", skyTheme);
+
+moon.addEventListener("mouseover", moonHovered);
+moon.addEventListener("mouseout", moonUnhovered);
+
+function cloudHovered() {
+    // We are currently in the sky theme
+    if (currentTheme == "sky")
+        cloud.setAttribute("src", "buttons/cloud-sky-hovered.png");
+
+    // We are currently in the night theme
+    else if (currentTheme == "night")
+        cloud.setAttribute("src", "buttons/cloud-night-hovered.png");
+}
+
+function cloudUnhovered() {
+    // We are currently in the sky theme
+    if (currentTheme == "sky")
+        cloud.setAttribute("src", "buttons/cloud-sky.png");
+
+    // We are currently in the night theme
+    else if (currentTheme == "night")
+        cloud.setAttribute("src", "buttons/cloud-night.png");
+}
+
+function moonHovered() {
+    // We are currently in the sky theme
+    if (currentTheme == "sky")
+        moon.setAttribute("src", "buttons/moon-sky-hovered.png");
+
+    // We are currently in the night theme
+    else if (currentTheme == "night")
+        moon.setAttribute("src", "buttons/moon-night-hovered.png");
+}
+
+function moonUnhovered() {
+    // We are currently in the sky theme
+    if (currentTheme == "sky")
+        moon.setAttribute("src", "buttons/moon-sky.png");
+
+    // We are currently in the night theme
+    else if (currentTheme == "night")
+        moon.setAttribute("src", "buttons/moon-night.png");
+}
+
+function skyTheme() {
+    // Do nothing if the extension is already in sky theme
+    if (currentTheme == "sky") {
+
+        // Change currentTheme to "sky"
+        changeTheme(1);
+        return;
+    }
+}
+
+function changeTheme(themeIndex) {
+    console.log("CALLED");
+    document.body.style.backgroundImage = themeBackgrounds[themeIndex];
 }
