@@ -1,22 +1,27 @@
 /* Extension window and background */
 html, body {
-    height: 500px;
     width: 750px;
+    height: 500px;
 
-    background-image: url("images/ocean-background.png");
-    /* background-color: #caede5; */
+    /* This... seemingly centers the body, as the body was previously off-centered to the right slightly */
+    margin-left: 0%;
+    margin-top: 0%;
+
+    background-image: url("backgrounds/sky.png");
+    /*background-color: #2f3d4d;*/
+    /* cloud night is #384f6b*/
 }
 
 /* Bookmark search box */
 #search-bar input[type=text] {
-    /* VV this doesn't fully center the text, as the padding adds extra width
-        that "margin: auto" does not seem to adjust for, at least that's my guess
+    /* VV This does, in fact, fully center the search bar; I now think the reason for the search bar being
+          off centered is not because of the padding, but rather because the entire body was off centered
+          to the right slightly, for a reason I am not sure of at this moment VV*/
     display: block;
-    margin: auto; */
-
     width: 75%;
-    margin-top: 2.5%;
-    margin-left: 9.9%;
+
+    /* margin: top right bottom left*/
+    margin: 2.5% auto auto auto;
 
     padding: 1.6%;
     border: none;
@@ -49,4 +54,35 @@ p {
 /* Links that link the bookmark results to their respective pages */
 a {
     color: #3e7a6e;
+}
+
+#theme-button-1 {
+    /* Button image will be 25px x 25px */
+    width: 25px;
+    height: 25px;
+
+    position: fixed;
+    bottom: 15px;
+    right: 50px;
+
+    border: none;
+    border-radius: 7px;
+}
+
+#theme-button-2 {
+    /* Button image will be 25px x 25px */
+    width: 25px;
+    height: 25px;
+
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+
+    border: none;
+    border-radius: 7px;
+}
+
+.button-image {
+    width: 25px;
+    height: 25px;
 }
