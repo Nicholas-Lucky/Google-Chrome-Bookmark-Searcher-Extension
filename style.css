@@ -11,7 +11,7 @@ html, body {
     /* cloud night is #384f6b*/
 }
 
-/* Bookmark search box */
+/* Bookmark search bar */
 #search-bar input[type=text] {
     /* I found that, when I set the display property of this #search-bar element to display: block, the <body> tag
        would only "begin" at the top of the search bar; if I made the search bar lower than the #results-box, then the
@@ -27,7 +27,19 @@ html, body {
     border: none;
     border-radius: 10px;
 
+    background-color: #e9f5f2;
     font-size: 18px;
+    color: #324d47;
+}
+
+/* Styling for when the search bar is selected */
+#search-bar input[type=text]:focus {
+    outline: none;
+}
+
+/* Styling for the search bar's placeholder text */
+input::placeholder {
+    color: #8b9492;
 }
 
 /* Box to house the found bookmarks */
