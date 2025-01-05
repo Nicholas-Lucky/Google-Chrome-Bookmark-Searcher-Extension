@@ -86,6 +86,7 @@ async function displayBookmarks() {
         if (functionCallID == currentSearchID)
             // Display the found bookmarks to resultsText
             resultsText.innerHTML = formattedHTMLText;
+            keepTheme();
     }
 }
 
@@ -289,24 +290,60 @@ async function getParentFolders(bookmarkNode) {
 // Current theme the extension is in (set to sky when the extension is installed)
 let currentTheme = "sky";
 
+// We will
+let themeIsChanging = false;
+
 // Array to house the theme backgrounds: [skyColor, nightColor]
 let themeBackgrounds = ["url('backgrounds/sky.png')", "url('backgrounds/night.png')"];
 
-// Arrays to house the colors used for the results page: [skyColor, nightColor]
-let resultsPageBackgroundColors = ["#badbd4"];
-let resultsTextColors = ["#324d47"];
-let resultsLinkColors = ["#3e7a6e"];
+// Arrays to house the button colors: [skyColor, nightColor]
+let cloudUnhoveredColors = ["buttons/cloud-sky.png", "buttons/cloud-night.png"];
+let cloudHoveredColors = ["buttons/cloud-sky-hovered.png", "buttons/cloud-night-hovered.png"];
+let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png"];
+let moonHoveredColors = ["buttons/moon-sky-hovered.png", "buttons/moon-night-hovered.png"];
+
+
+// Array to house the colors used for the search bar: [skyColor, nightColor]
+let searchBarBackgroundColors = ["#e9f5f2", "#3f5975"];
+let searchBarPlaceholderColors = ["#8b9492", "#6b8199"];
+let searchBarTextColors = ["#324d47", "#a9b7c7"];
+
+// Arrays to house the colors used for the results box: [skyColor, nightColor]
+let resultsBoxBackgroundColors = ["#badbd4", "#1d2732"];
+let resultsBoxTextColors = ["#324d47", "#d8c8a8"];
+let resultsBoxLinkColors = ["#3e7a6e", "#ffdfa0"];
 
 // Get the relevant elements
 const cloud = document.getElementById("cloud");
 const moon = document.getElementById("moon");
 
+const searchBar = document.querySelector("input[type=text]");
+const searchBarPlaceholder = document.getElementsByTagName("input::placeholder");
+
+const resultsBox = document.getElementById("results-box");
+const resultsBoxText = document.getElementsByTagName("p");
+const resultsBoxLink = document.getElementsByTagName("a");
+
+// Add Event Listeners for when the theme buttons are hovered over or clicked
 cloud.addEventListener("mouseover", cloudHovered);
 cloud.addEventListener("mouseout", cloudUnhovered);
 cloud.addEventListener("click", skyTheme);
 
 moon.addEventListener("mouseover", moonHovered);
 moon.addEventListener("mouseout", moonUnhovered);
+moon.addEventListener("click", nightTheme);
+
+// Explain later
+//setInterval(keepTheme, 50);
+
+function keepTheme() {
+    console.log("hello?");
+    if ((currentTheme == "sky") && (!themeIsChanging))
+        changeTheme(0);
+
+    else if ((currentTheme == "night") && (!themeIsChanging))
+        changeTheme(1);
+}
 
 function cloudHovered() {
     // We are currently in the sky theme
@@ -350,15 +387,66 @@ function moonUnhovered() {
 
 function skyTheme() {
     // Do nothing if the extension is already in sky theme
-    if (currentTheme == "sky") {
+    if (currentTheme != "sky") {
+        themeIsChanging = true;
+
+        // Switch to sky theme
+        changeTheme(0);
 
         // Change currentTheme to "sky"
+        currentTheme = "sky";
+
+        themeIsChanging = false;
+    }
+}
+
+function nightTheme() {
+    // Do nothing if the extension is already in sky theme
+    if (currentTheme != "night") {
+        themeIsChanging = true;
+
+        // Switch to night theme
         changeTheme(1);
-        return;
+
+        // Change currentTheme to "night"
+        currentTheme = "night";
+
+        themeIsChanging = false;
     }
 }
 
 function changeTheme(themeIndex) {
-    console.log("CALLED");
+    // Change the background theme
     document.body.style.backgroundImage = themeBackgrounds[themeIndex];
+    document.documentElement.style.backgroundImage = themeBackgrounds[themeIndex];
+
+    // Change the search bar colors
+    searchBar.style.backgroundColor = searchBarBackgroundColors[themeIndex];
+    searchBar.style.color = searchBarTextColors[themeIndex];
+
+    for (let i = 0; i < searchBarPlaceholder.length; i++)
+        searchBarPlaceholder[i].style.color = searchBarPlaceholderColors[themeIndex];
+
+    // Change the results box colors
+    resultsBox.style.backgroundColor = resultsBoxBackgroundColors[themeIndex];
+
+    for (let i = 0; i < resultsBoxText.length; i++)
+        resultsBoxText[i].style.color = resultsBoxTextColors[themeIndex];
+
+    for (let i = 0; i < resultsBoxLink.length; i++)
+        resultsBoxLink[i].style.color = resultsBoxLinkColors[themeIndex];
+
+    // Change the theme menu colors
+    if (cloud.matches(":hover"))
+        cloud.setAttribute("src", cloudHoveredColors[themeIndex]);
+
+    else
+        cloud.setAttribute("src", cloudUnhoveredColors[themeIndex]);
+
+    if (moon.matches(":hover"))
+        moon.setAttribute("src", moonHoveredColors[themeIndex]);
+
+    else
+        moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
+
 }
