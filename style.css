@@ -3,9 +3,8 @@ html, body {
     width: 750px;
     height: 500px;
 
-    /* This... seemingly centers the body, as the body was previously off-centered to the right slightly */
-    margin-left: 0%;
-    margin-top: 0%;
+    /* This... seemingly centers the body, as the body was previously off-centered to the right and bottom slightly */
+    margin: 0%;
 
     background-image: url("backgrounds/sky.png");
     /*background-color: #2f3d4d;*/
@@ -14,14 +13,15 @@ html, body {
 
 /* Bookmark search box */
 #search-bar input[type=text] {
-    /* VV This does, in fact, fully center the search bar; I now think the reason for the search bar being
-          off centered is not because of the padding, but rather because the entire body was off centered
-          to the right slightly, for a reason I am not sure of at this moment VV*/
-    display: block;
+    /* I found that, when I set the display property of this #search-bar element to display: block, the <body> tag
+       would only "begin" at the top of the search bar; if I made the search bar lower than the #results-box, then the
+       <body> tag would "begin" at the top of the #results-box. I found that omitting display: block seemed to fix
+       this, so we will leave the display property omitted for the time being */
+
     width: 75%;
 
     /* margin: top right bottom left*/
-    margin: 2.5% auto auto auto;
+    margin: 2.5% 10.9% auto 10.9%;
 
     padding: 1.6%;
     border: none;
@@ -35,7 +35,7 @@ html, body {
     width: 75%;
     height: 63%;
     margin-top: 2.5%;
-    margin-left: 9.9%;
+    margin-left: 10.9%;
 
     padding: 1.6%;
     border: none;
