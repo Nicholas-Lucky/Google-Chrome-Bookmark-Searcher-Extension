@@ -353,6 +353,23 @@ moon.addEventListener("mouseout", unhoverMoon);
 cloud.addEventListener("click", skyTheme);
 moon.addEventListener("click", nightTheme);
 
+/**
+ * Loads a saved theme (stored in chrome's local storage) to the extension. Currently, we use loadSavedTheme
+ * to load the most recent theme the extension was in before the user closed the extension. If the extension
+ * was just installed, the saved theme will default to the sky theme.
+ *
+ * loadSavedTheme does not have any parameters.
+ *
+ * @return {Promise <void>} loadSavedTheme does not return a value, however currentTheme, themeIndex, and
+ *                          many of the extension's elements may be mutated. loadSavedTheme is an asynchronous (async)
+ *                          function, so it will return a Promise by default, even if it will not return a
+ *                          value when the Promise is resolved.
+ *
+ * Time complexity: O(n);   n = # of saved bookmarks
+ *                          loadSavedTheme calls keepTheme, which itself has a time complexity of O(n) currently.
+ *
+ * Space complexity: O(1);  loadSavedTheme calls keepTheme, which itself has a space complexity of O(1) currently.
+ */
 async function loadSavedTheme() {
     // Get the saved currentTheme and themeIndex from chrome's local storage
     let savedTheme = await chrome.storage.local.get("currentTheme");
@@ -453,7 +470,7 @@ function unhoverMoon() {
  */
 async function skyTheme() {
     // Do nothing if the extension is already in sky theme, or if another theme change is taking place at this moment
-    if ((currentTheme != "sky") && (!themeIsChanging)) {
+    if ((currentTheme !== "sky") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
 
@@ -483,7 +500,7 @@ async function skyTheme() {
  */
 async function nightTheme() {
     // Do nothing if the extension is already in night theme, or if another theme change is taking place at this moment
-    if ((currentTheme != "night") && (!themeIsChanging)) {
+    if ((currentTheme !== "night") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
 
@@ -551,6 +568,26 @@ function changeTheme(themeIndex) {
         moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
 }
 
+/**
+ * Updates currentTheme and themeIndex to a new theme and index, and stores this new information in chrome's
+ * local storage (we currently override the previous theme and index stored in chrome's local storage).
+ *
+ * @param {String} newTheme      The new theme the extension is in: "sky", "night"
+ *
+ * @param {Number} newThemeIndex The new theme index that specifies the extension's theme.
+ *                               0: Sky
+ *                               1: Night
+ *
+ * @return {Promise <void>}      updateThemeInfo does not return a value, however currentTheme, themeIndex, and
+ *                               chrome's local storage may be mutated. updateThemeInfo is an asynchronous (async)
+ *                               function, so it will return a Promise by default, even if it will not return a
+ *                               value when the Promise is resolved.
+ *
+ * Time complexity: O(1);        updateThemeInfo's "path" is fixed for the time being.
+ *
+ * Space complexity: O(1);       The only addition call to the call stack will be the initial call to
+ *                               updateThemeInfo itself.
+ */
 async function updateThemeInfo(newTheme, newThemeIndex) {
     // Update the theme information in this script.js file
     currentTheme = newTheme;
