@@ -17,7 +17,7 @@ searchText.addEventListener("input", displayBookmarks);
  *
  *                                      displayBookmarks does not require any parameters.
  *
- * @return {Promise}                    displayBookmarks does not return a value, however it may mutate
+ * @return {Promise <void>}             displayBookmarks does not return a value, however it may mutate
  *                                      resultsText if any bookmarks are found to have searchText in their titles.
  *                                      While displayBookmarks is not meant to return a value, however, it is an
  *                                      asynchronous (async) function, so it will return a Promise by default.
@@ -89,9 +89,9 @@ async function displayBookmarks() {
 
             /* The implementation for this function and its relating functionality will appear later in the code,
              * however we essentially encountered a minor issue where, suppose the user switches the extension theme
-             * from Sky to Night. If the user then clears the search bar and inputs another search, the links on the
-             * matched bookmarks will still be formatted according to the SKy theme. I think this is because we
-             * set the formatting of the links according to the Sky theme by default in style.css, and because
+             * from sky to night. If the user then clears the search bar and inputs another search, the links on the
+             * matched bookmarks will still be formatted according to the sky theme. I think this is because we
+             * set the formatting of the links according to the sky theme by default in style.css, and because
              * changeTheme (another function whose implementation appears later in the code) only changes the
              * formatting of the elements that currently exist in the extension window; to my knowledge, the <a>
              * links are the only elements who are not always present in the extension window: when the search bar is
@@ -166,7 +166,7 @@ function searchForBookmarks(bookmarkNode) {
  * @param {Object} bookmarksArray   An array containing the bookmarks that contain the user's input, searchText,
  *                                  in their titles.
  *
- * @return {Promise}                An HTML-formatted list, formattedText, containing information on the bookmarks
+ * @return {Promise <String>}       An HTML-formatted list, formattedText, containing information on the bookmarks
  *                                  in bookmarksArray. formatBookmarksToHTML is an asynchronous (async) function,
  *                                  so it can be run in the background, causing its return value to temporarily be
  *                                  a Promise; upon resolution, the return value should be a string {String}.
@@ -255,7 +255,7 @@ async function formatBookmarksToHTML(bookmarksArray) {
  *                              bookmarks in a tree). chrome for developers defines this to be of type
  *                              BookmarkTreeNode.
  *
- * @return {Promise}            parentsArray, an array containing the folders bookmarkNode is in. An element
+ * @return {Promise <Object>}   parentsArray, an array containing the folders bookmarkNode is in. An element
  *                              in parentsArray is the parent folder of an element to its left, and is a
  *                              child folder of an element to its right. getParentFolders is an asynchronous
  *                              (async) function, so it can be run in the background, causing its return value
@@ -298,9 +298,16 @@ async function getParentFolders(bookmarkNode) {
 
 /* ----------------------------- VVV Theme Toggle Implementation VVV ----------------------------- */
 
-// Current theme the extension is in (0 = sky, 1 = night)
+// Mainly for testing in the DevTools console
+console.log("------------------ EXTENSION CONSOLE ------------------");
+
+// Default theme the extension is in (0 = sky, 1 = night)
+// Currently set to currentTheme = "sky" and themeIndex = 0 by default
 let currentTheme = "sky";
 let themeIndex = 0;
+
+// Get and display the most recent theme the extension was in (asynchronous process)
+loadSavedTheme();
 
 /* Just a safety feature to make sure keepTheme will not affect the extension
  * if we are in the middle of changing the extension theme */
@@ -345,6 +352,23 @@ moon.addEventListener("mouseout", unhoverMoon);
 // Add Event Listeners for when the theme buttons are clicked on
 cloud.addEventListener("click", skyTheme);
 moon.addEventListener("click", nightTheme);
+
+async function loadSavedTheme() {
+    // Get the saved currentTheme and themeIndex from chrome's local storage
+    let savedTheme = await chrome.storage.local.get("currentTheme");
+    let savedThemeIndex = await chrome.storage.local.get("themeIndex");
+
+    // Update currentTheme and themeIndex (the variables in this script.js file) if needed
+    currentTheme = savedTheme.currentTheme;
+    themeIndex = savedThemeIndex.themeIndex;
+
+    // Mainly for testing in the DevTools console
+    console.log(`\tcurrentTheme: ${currentTheme}`);
+    console.log(`\tthemeIndex: ${themeIndex}`);
+
+    // Load the saved theme into the extension
+    keepTheme();
+}
 
 /**
  * Changes the image of the cloud button to show that it is being hovered over.
@@ -415,7 +439,7 @@ function unhoverMoon() {
 }
 
 /**
- * Changes the color palette of the extension to align with the Sky theme.
+ * Changes the color palette of the extension to align with the sky theme.
  *
  *                         skyTheme does not have any parameters.
  *
@@ -427,15 +451,14 @@ function unhoverMoon() {
  *
  * Space complexity: O(1); skyTheme calls changeTheme, which itself has a space complexity of O(1) currently.
  */
-function skyTheme() {
-    // Do nothing if the extension is already in sky theme
-    if (currentTheme != "sky") {
+async function skyTheme() {
+    // Do nothing if the extension is already in sky theme, or if another theme change is taking place at this moment
+    if ((currentTheme != "sky") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
 
-        // Change the theme information to "sky"
-        currentTheme = "sky";
-        themeIndex = 0;
+        // Update the theme information to "sky"
+        await updateThemeInfo("sky", 0);
 
         // Switch to sky theme
         changeTheme(themeIndex);
@@ -446,7 +469,7 @@ function skyTheme() {
 }
 
 /**
- * Changes the color palette of the extension to align with the Night theme.
+ * Changes the color palette of the extension to align with the night theme.
  *
  *                         nightTheme does not have any parameters.
  *
@@ -458,15 +481,14 @@ function skyTheme() {
  *
  * Space complexity: O(1); nightTheme calls changeTheme, which itself has a space complexity of O(1) currently.
  */
-function nightTheme() {
-    // Do nothing if the extension is already in sky theme
-    if (currentTheme != "night") {
+async function nightTheme() {
+    // Do nothing if the extension is already in night theme, or if another theme change is taking place at this moment
+    if ((currentTheme != "night") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
 
-        // Change the theme information to "night"
-        currentTheme = "night";
-        themeIndex = 1;
+        // Update the theme information to "night"
+        await updateThemeInfo("night", 1);
 
         // Switch to night theme
         changeTheme(themeIndex);
@@ -527,6 +549,17 @@ function changeTheme(themeIndex) {
         moon.setAttribute("src", moonHoveredColors[themeIndex]);
     else
         moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
+}
+
+async function updateThemeInfo(newTheme, newThemeIndex) {
+    // Update the theme information in this script.js file
+    currentTheme = newTheme;
+    themeIndex = newThemeIndex;
+
+    /* Update the theme information in chrome's local storage; we want chrome's local
+     * storage to keep the most recent theme the extension was in */
+    await chrome.storage.local.set({currentTheme: newTheme});
+    await chrome.storage.local.set({themeIndex: newThemeIndex});
 }
 
 /**
