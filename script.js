@@ -86,6 +86,17 @@ async function displayBookmarks() {
         if (functionCallID == currentSearchID)
             // Display the found bookmarks to resultsText
             resultsText.innerHTML = formattedHTMLText;
+
+            /* The implementation for this function and its relating functionality will appear later in the code,
+             * however we essentially encountered a minor issue where, suppose the user switches the extension theme
+             * from Sky to Night. If the user then clears the search bar and inputs another search, the links on the
+             * matched bookmarks will still be formatted according to the SKy theme. I think this is because we
+             * set the formatting of the links according to the Sky theme by default in style.css, and because
+             * changeTheme (another function whose implementation appears later in the code) only changes the
+             * formatting of the elements that currently exist in the extension window; to my knowledge, the <a>
+             * links are the only elements who are not always present in the extension window: when the search bar is
+             * empty. Hence, keepTheme will prevent this by making sure these <a> links are formatted according to the
+             * current theme directly after they have been displayed on the extension window. */
             keepTheme();
     }
 }
@@ -287,21 +298,22 @@ async function getParentFolders(bookmarkNode) {
 
 /* ----------------------------- VVV Theme Toggle Implementation VVV ----------------------------- */
 
-// Current theme the extension is in (set to sky when the extension is installed)
+// Current theme the extension is in (0 = sky, 1 = night)
 let currentTheme = "sky";
+let themeIndex = 0;
 
-// We will
+/* Just a safety feature to make sure keepTheme will not affect the extension
+ * if we are in the middle of changing the extension theme */
 let themeIsChanging = false;
 
 // Array to house the theme backgrounds: [skyColor, nightColor]
 let themeBackgrounds = ["url('backgrounds/sky.png')", "url('backgrounds/night.png')"];
 
 // Arrays to house the button colors: [skyColor, nightColor]
-let cloudUnhoveredColors = ["buttons/cloud-sky.png", "buttons/cloud-night.png"];
 let cloudHoveredColors = ["buttons/cloud-sky-hovered.png", "buttons/cloud-night-hovered.png"];
-let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png"];
+let cloudUnhoveredColors = ["buttons/cloud-sky.png", "buttons/cloud-night.png"];
 let moonHoveredColors = ["buttons/moon-sky-hovered.png", "buttons/moon-night-hovered.png"];
-
+let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png"];
 
 // Array to house the colors used for the search bar: [skyColor, nightColor]
 let searchBarBackgroundColors = ["#e9f5f2", "#3f5975"];
@@ -324,101 +336,170 @@ const resultsBox = document.getElementById("results-box");
 const resultsBoxText = document.getElementsByTagName("p");
 const resultsBoxLink = document.getElementsByTagName("a");
 
-// Add Event Listeners for when the theme buttons are hovered over or clicked
-cloud.addEventListener("mouseover", cloudHovered);
-cloud.addEventListener("mouseout", cloudUnhovered);
-cloud.addEventListener("click", skyTheme);
+// Add Event Listeners for when the theme buttons are hovered over/unhovered
+cloud.addEventListener("mouseover", hoverCloud);
+cloud.addEventListener("mouseout", unhoverCloud);
+moon.addEventListener("mouseover", hoverMoon);
+moon.addEventListener("mouseout", unhoverMoon);
 
-moon.addEventListener("mouseover", moonHovered);
-moon.addEventListener("mouseout", moonUnhovered);
+// Add Event Listeners for when the theme buttons are clicked on
+cloud.addEventListener("click", skyTheme);
 moon.addEventListener("click", nightTheme);
 
-// Explain later
-//setInterval(keepTheme, 50);
-
-function keepTheme() {
-    console.log("hello?");
-    if ((currentTheme == "sky") && (!themeIsChanging))
-        changeTheme(0);
-
-    else if ((currentTheme == "night") && (!themeIsChanging))
-        changeTheme(1);
+/**
+ * Changes the image of the cloud button to show that it is being hovered over.
+ *
+ *                         hoverCloud does not have any parameters.
+ *
+ * @return {void}          hoverCloud does not return a value, however cloud will be changed.
+ *
+ * Time complexity: O(1);  hoverCloud only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); hoverCloud does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to hoverCloud itself.
+ */
+function hoverCloud() {
+    // themeIndex will determine the theme color we want our button to have
+    cloud.setAttribute("src", cloudHoveredColors[themeIndex]);
 }
 
-function cloudHovered() {
-    // We are currently in the sky theme
-    if (currentTheme == "sky")
-        cloud.setAttribute("src", "buttons/cloud-sky-hovered.png");
-
-    // We are currently in the night theme
-    else if (currentTheme == "night")
-        cloud.setAttribute("src", "buttons/cloud-night-hovered.png");
+/**
+ * Changes the image of the cloud button to show that it is not/no longer being hovered over.
+ *
+ *                         unhoverCloud does not have any parameters.
+ *
+ * @return {void}          unhoverCloud does not return a value, however cloud will be changed.
+ *
+ * Time complexity: O(1);  unhoverCloud only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); unhoverCloud does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to unhoverCloud itself.
+ */
+function unhoverCloud() {
+    // themeIndex will determine the theme color we want our button to have
+    cloud.setAttribute("src", cloudUnhoveredColors[themeIndex]);
 }
 
-function cloudUnhovered() {
-    // We are currently in the sky theme
-    if (currentTheme == "sky")
-        cloud.setAttribute("src", "buttons/cloud-sky.png");
-
-    // We are currently in the night theme
-    else if (currentTheme == "night")
-        cloud.setAttribute("src", "buttons/cloud-night.png");
+/**
+ * Changes the image of the moon button to show that it is being hovered over.
+ *
+ *                         hoverMoon does not have any parameters.
+ *
+ * @return {void}          hoverMoon does not return a value, however moon will be changed.
+ *
+ * Time complexity: O(1);  hoverMoon only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); hoverMoon does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to hoverMoon itself.
+ */
+function hoverMoon() {
+    // themeIndex will determine the theme color we want our button to have
+    moon.setAttribute("src", moonHoveredColors[themeIndex]);
 }
 
-function moonHovered() {
-    // We are currently in the sky theme
-    if (currentTheme == "sky")
-        moon.setAttribute("src", "buttons/moon-sky-hovered.png");
-
-    // We are currently in the night theme
-    else if (currentTheme == "night")
-        moon.setAttribute("src", "buttons/moon-night-hovered.png");
+/**
+ * Changes the image of the moon button to show that it is not/no longer being hovered over.
+ *
+ *                         unhoverMoon does not have any parameters.
+ *
+ * @return {void}          unhoverMoon does not return a value, however moon will be changed.
+ *
+ * Time complexity: O(1);  unhoverMoon only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); unhoverMoon does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to unhoverMoon itself.
+ */
+function unhoverMoon() {
+    // themeIndex will determine the theme color we want our button to have
+    moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
 }
 
-function moonUnhovered() {
-    // We are currently in the sky theme
-    if (currentTheme == "sky")
-        moon.setAttribute("src", "buttons/moon-sky.png");
-
-    // We are currently in the night theme
-    else if (currentTheme == "night")
-        moon.setAttribute("src", "buttons/moon-night.png");
-}
-
+/**
+ * Changes the color palette of the extension to align with the Sky theme.
+ *
+ *                         skyTheme does not have any parameters.
+ *
+ * @return {void}          skyTheme does not return a value, however many of the elements on the extension
+ *                         may be changed by a color switch.
+ *
+ * Time complexity: O(n);  n = # of saved bookmarks
+ *                         skyTheme calls changeTheme, which itself has a time complexity of O(n) currently.
+ *
+ * Space complexity: O(1); skyTheme calls changeTheme, which itself has a space complexity of O(1) currently.
+ */
 function skyTheme() {
     // Do nothing if the extension is already in sky theme
     if (currentTheme != "sky") {
+        // Signify that the theme will be changing
         themeIsChanging = true;
 
-        // Switch to sky theme
-        changeTheme(0);
-
-        // Change currentTheme to "sky"
+        // Change the theme information to "sky"
         currentTheme = "sky";
+        themeIndex = 0;
 
+        // Switch to sky theme
+        changeTheme(themeIndex);
+
+        // Signify that the theme-change is done
         themeIsChanging = false;
     }
 }
 
+/**
+ * Changes the color palette of the extension to align with the Night theme.
+ *
+ *                         nightTheme does not have any parameters.
+ *
+ * @return {void}          nightTheme does not return a value, however many of the elements on the extension
+ *                         may be changed by a color switch.
+ *
+ * Time complexity: O(n);  n = # of saved bookmarks
+ *                         nightTheme calls changeTheme, which itself has a time complexity of O(n) currently.
+ *
+ * Space complexity: O(1); nightTheme calls changeTheme, which itself has a space complexity of O(1) currently.
+ */
 function nightTheme() {
     // Do nothing if the extension is already in sky theme
     if (currentTheme != "night") {
+        // Signify that the theme will be changing
         themeIsChanging = true;
 
-        // Switch to night theme
-        changeTheme(1);
-
-        // Change currentTheme to "night"
+        // Change the theme information to "night"
         currentTheme = "night";
+        themeIndex = 1;
 
+        // Switch to night theme
+        changeTheme(themeIndex);
+
+        // Signify that the theme-change is done
         themeIsChanging = false;
     }
 }
 
+/**
+ * Changes every element's color in the extension to align with a specified theme.
+ *
+ * @param {Number} themeIndex An index specifying the theme the extension to be in.
+ *                                0: Sky
+ *                                1: Night
+ *
+ * @return {void}             changeTheme does not return a value, however many of the elements on the extension
+ *                            may be changed by a color switch.
+ *
+ * Time complexity: O(n);     n = # of saved bookmarks
+ *                            If the user searches for a set of bookmarks, and changes the theme while the matched
+ *                            bookmarks are still displaying on the results box, then changeTheme will loop through
+ *                            the links of each matched bookmark in the results box to change the links' colors to
+ *                            match the appropriate theme; in the worst case scenario, all of the user's saved
+ *                            bookmarks will be displayed in the results box when changeTheme is called.
+ *
+ * Space complexity: O(1);    changeTheme does not call any other functions, so the only addition to the call stack
+ *                            would be the initial function call to changeTheme itself.
+ */
 function changeTheme(themeIndex) {
     // Change the background theme
-    document.body.style.backgroundImage = themeBackgrounds[themeIndex];
     document.documentElement.style.backgroundImage = themeBackgrounds[themeIndex];
+    document.body.style.backgroundImage = themeBackgrounds[themeIndex];
 
     // Change the search bar colors
     searchBar.style.backgroundColor = searchBarBackgroundColors[themeIndex];
@@ -436,17 +517,33 @@ function changeTheme(themeIndex) {
     for (let i = 0; i < resultsBoxLink.length; i++)
         resultsBoxLink[i].style.color = resultsBoxLinkColors[themeIndex];
 
-    // Change the theme menu colors
+    // Change the theme menu colors. Keep a button "hovered over" if the user's cursor is still on the button
     if (cloud.matches(":hover"))
         cloud.setAttribute("src", cloudHoveredColors[themeIndex]);
-
     else
         cloud.setAttribute("src", cloudUnhoveredColors[themeIndex]);
 
     if (moon.matches(":hover"))
         moon.setAttribute("src", moonHoveredColors[themeIndex]);
-
     else
         moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
+}
 
+/**
+ * Makes sure every element's color in the extension aligns with the theme the extension is currently in.
+ *
+ *                         keepTheme does not have any parameters.
+ *
+ * @return {void}          keepTheme does not return a value, however many of the elements on the extension
+ *                         may be changed by a color switch.
+ *
+ * Time complexity: O(n);  n = # of saved bookmarks
+ *                         keepTheme calls changeTheme, which itself has a time complexity of O(n) currently.
+ *
+ * Space complexity: O(1); keepTheme calls changeTheme, which itself has a space complexity of O(1) currently.
+ */
+function keepTheme() {
+    // Only perform this "theme check" if the extension is currently not in the middle of changing themes
+    if (!themeIsChanging)
+        changeTheme(themeIndex);
 }
