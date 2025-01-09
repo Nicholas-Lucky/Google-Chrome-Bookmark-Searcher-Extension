@@ -332,6 +332,10 @@ let resultsBoxBackgroundColors = ["#badbd4", "#1d2732"];
 let resultsBoxTextColors = ["#324d47", "#d8c8a8"];
 let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0"];
 
+// Array to house the colors used for text selection/highlighting: [skyColor, nightColor]
+let selectionTextColors = ["#f5fffd", "#e3f0ff"];
+let selectionBackgroundColors = ["#7a9993", "#35485c"];
+
 // Get the relevant elements
 const cloud = document.getElementById("cloud");
 const moon = document.getElementById("moon");
@@ -541,6 +545,10 @@ function changeTheme(themeIndex) {
     root.style.setProperty("--results-box-background-color", resultsBoxBackgroundColors[themeIndex]);
     root.style.setProperty("--paragraph-color", resultsBoxTextColors[themeIndex]);
     root.style.setProperty("--link-color", resultsBoxLinkColors[themeIndex]);
+
+    // Change the text selection colors
+    root.style.setProperty("--selection-text-color", selectionTextColors[themeIndex]);
+    root.style.setProperty("--selection-background-color", selectionBackgroundColors[themeIndex]);
 
     // Change the theme button colors
     changeThemeButton(cloud, cloudHoveredColors, cloudUnhoveredColors);
