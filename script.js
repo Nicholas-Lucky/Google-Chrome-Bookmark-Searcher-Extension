@@ -324,7 +324,7 @@ let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png"];
 
 // Array to house the colors used for the search bar: [skyColor, nightColor]
 let searchBarBackgroundColors = ["#e9f5f2", "#3f5975"];
-let searchBarPlaceholderColors = ["#8b9492", "#6b8199"];
+let searchBarPlaceholderColors = ["#8b9492", "#ffffff"];
 let searchBarTextColors = ["#324d47", "#a9b7c7"];
 
 // Arrays to house the colors used for the results box: [skyColor, nightColor]
@@ -337,7 +337,10 @@ const cloud = document.getElementById("cloud");
 const moon = document.getElementById("moon");
 
 const searchBar = document.querySelector("input[type=text]");
-const searchBarPlaceholder = document.getElementsByTagName("input::placeholder");
+//const searchBarPlaceholder = document.querySelector("search-bar");
+
+let root = document.querySelector(":root");
+
 
 const resultsBox = document.getElementById("results-box");
 const resultsBoxText = document.getElementsByTagName("p");
@@ -543,10 +546,12 @@ function changeTheme(themeIndex) {
     // Change the search bar colors
     searchBar.style.backgroundColor = searchBarBackgroundColors[themeIndex];
     searchBar.style.color = searchBarTextColors[themeIndex];
-
-    for (let i = 0; i < searchBarPlaceholder.length; i++)
-        searchBarPlaceholder[i].style.color = searchBarPlaceholderColors[themeIndex];
-
+    /*
+    for (let i = 0; i < searchBarPlaceholder.length; i++) {
+        console.log("Hello?");
+        searchBarPlaceholder[i].style.setProperty('--placeholder-color', searchBarPlaceholderColors[themeIndex]);
+    }*/
+    root.style.setProperty("--test", searchBarPlaceholderColors[themeIndex]);
     // Change the results box colors
     resultsBox.style.backgroundColor = resultsBoxBackgroundColors[themeIndex];
 
