@@ -329,7 +329,7 @@ let searchBarPlaceholderColors = ["#8b9492", "#8197b3"];
 
 // Arrays to house the colors used for the results box: [skyColor, nightColor]
 let resultsBoxBackgroundColors = ["#badbd4", "#1d2732"];
-let resultsBoxTextColors = ["#324d47", "#d8c8a8"];
+let resultsBoxTextColors = ["#324d47", "#d6cab2"];
 let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0"];
 
 // Array to house the colors used for text selection/highlighting: [skyColor, nightColor]
