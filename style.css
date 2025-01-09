@@ -16,7 +16,13 @@
     --paragraph-color: #324d47;
 
     /* Color of the <a> links */
-    --link-color: #3e7a6e;
+    --link-color: #3e7a74;
+
+    /* Color of the text when the user selects it */
+    --selection-text-color: #f5fffd;
+
+    /* Color of the background around a text when the user selects it */
+    --selection-background-color: #7a9993;
 }
 
 /* Extension window and background */
@@ -87,6 +93,7 @@ a {
     color: var(--link-color);
 }
 
+/* Cloud Button */
 #theme-button-1 {
     /* Button image will be 25px x 25px */
     width: 25px;
@@ -100,6 +107,7 @@ a {
     border-radius: 7px;
 }
 
+/* Moon Button */
 #theme-button-2 {
     /* Button image will be 25px x 25px */
     width: 25px;
@@ -113,7 +121,14 @@ a {
     border-radius: 7px;
 }
 
+/* Button Icon */
 .button-image {
     width: 25px;
     height: 25px;
+}
+
+/* Styling for the text selection (when the user selects/highlights text) */
+::selection {
+    color: var(--selection-text-color);
+    background: var(--selection-background-color);
 }
