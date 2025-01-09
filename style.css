@@ -1,3 +1,7 @@
+:root {
+    --test: #8b9492;
+}
+
 /* Extension window and background */
 html, body {
     width: 750px;
@@ -39,7 +43,7 @@ html, body {
 
 /* Styling for the search bar's placeholder text */
 input::placeholder {
-    color: #8b9492;
+    color: var(--test);
 }
 
 /* Box to house the found bookmarks */
