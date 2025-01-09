@@ -1,5 +1,22 @@
+/* Variables to store the colors of the extension's elements; can be accessed and changed in script.js */
 :root {
-    --test: #8b9492;
+    /* Color of the search bar background */
+    --search-bar-background-color: #e9f5f2;
+
+    /* Color of the input text for the search bar */
+    --input-text-color: #324d47;
+
+    /* Color of the placeholder text for the search bar */
+    --placeholder-text-color: #8b9492;
+
+    /* Color of the results box background */
+    --results-box-background-color: #badbd4;
+
+    /* Color of the <p> paragraphs */
+    --paragraph-color: #324d47;
+
+    /* Color of the <a> links */
+    --link-color: #3e7a6e;
 }
 
 /* Extension window and background */
@@ -11,8 +28,6 @@ html, body {
     margin: 0%;
 
     background-image: url("backgrounds/sky.png");
-    /*background-color: #2f3d4d;*/
-    /* cloud night is #384f6b*/
 }
 
 /* Bookmark search bar */
@@ -31,9 +46,9 @@ html, body {
     border: none;
     border-radius: 10px;
 
-    background-color: #e9f5f2;
+    background-color: var(--search-bar-background-color);
     font-size: 18px;
-    color: #324d47;
+    color: var(--input-text-color);
 }
 
 /* Styling for when the search bar is selected */
@@ -43,7 +58,7 @@ html, body {
 
 /* Styling for the search bar's placeholder text */
 input::placeholder {
-    color: var(--test);
+    color: var(--placeholder-text-color);
 }
 
 /* Box to house the found bookmarks */
@@ -57,19 +72,19 @@ input::placeholder {
     border: none;
     border-radius: 10px;
 
-    background-color: #badbd4;
+    background-color: var(--results-box-background-color);
     overflow-y: auto;
 }
 
 /* Text to display the bookmark results */
 p {
     font-size: 14px;
-    color: #324d47;
+    color: var(--paragraph-color);
 }
 
 /* Links that link the bookmark results to their respective pages */
 a {
-    color: #3e7a6e;
+    color: var(--link-color);
 }
 
 #theme-button-1 {
