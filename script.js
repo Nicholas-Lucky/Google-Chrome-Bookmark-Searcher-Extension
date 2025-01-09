@@ -324,27 +324,18 @@ let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png"];
 
 // Array to house the colors used for the search bar: [skyColor, nightColor]
 let searchBarBackgroundColors = ["#e9f5f2", "#3f5975"];
-let searchBarPlaceholderColors = ["#8b9492", "#ffffff"];
-let searchBarTextColors = ["#324d47", "#a9b7c7"];
+let searchBarTextColors = ["#324d47", "#a2bde0"];
+let searchBarPlaceholderColors = ["#8b9492", "#8197b3"];
 
 // Arrays to house the colors used for the results box: [skyColor, nightColor]
 let resultsBoxBackgroundColors = ["#badbd4", "#1d2732"];
 let resultsBoxTextColors = ["#324d47", "#d8c8a8"];
-let resultsBoxLinkColors = ["#3e7a6e", "#ffdfa0"];
+let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0"];
 
 // Get the relevant elements
 const cloud = document.getElementById("cloud");
 const moon = document.getElementById("moon");
-
-const searchBar = document.querySelector("input[type=text]");
-//const searchBarPlaceholder = document.querySelector("search-bar");
-
-let root = document.querySelector(":root");
-
-
-const resultsBox = document.getElementById("results-box");
-const resultsBoxText = document.getElementsByTagName("p");
-const resultsBoxLink = document.getElementsByTagName("a");
+const root = document.querySelector(":root");
 
 // Add Event Listeners for when the theme buttons are hovered over/unhovered
 cloud.addEventListener("mouseover", hoverCloud);
@@ -528,15 +519,13 @@ async function nightTheme() {
  * @return {void}             changeTheme does not return a value, however many of the elements on the extension
  *                            may be changed by a color switch.
  *
- * Time complexity: O(n);     n = # of saved bookmarks
- *                            If the user searches for a set of bookmarks, and changes the theme while the matched
- *                            bookmarks are still displaying on the results box, then changeTheme will loop through
- *                            the links of each matched bookmark in the results box to change the links' colors to
- *                            match the appropriate theme; in the worst case scenario, all of the user's saved
- *                            bookmarks will be displayed in the results box when changeTheme is called.
+ * Time complexity: O(1);     changeTheme changes a set number of variables that the extension's elements derive
+ *                            their color from. While, for now, I see these variable changes as occurring regardless
+ *                            of the input size, I can understand if the effect of this function is similar to the
+ *                            previous implementation of changeTheme, in which each matched bookmark's formatting
+ *                            is changed individually (causing the time complexity for changeTheme to be O(n)).
  *
- * Space complexity: O(1);    changeTheme does not call any other functions, so the only addition to the call stack
- *                            would be the initial function call to changeTheme itself.
+ * Space complexity: O(1);    changeTheme calls changeThemeButton, which itself has a space complexity of O(1).
  */
 function changeTheme(themeIndex) {
     // Change the background theme
@@ -544,33 +533,47 @@ function changeTheme(themeIndex) {
     document.body.style.backgroundImage = themeBackgrounds[themeIndex];
 
     // Change the search bar colors
-    searchBar.style.backgroundColor = searchBarBackgroundColors[themeIndex];
-    searchBar.style.color = searchBarTextColors[themeIndex];
-    /*
-    for (let i = 0; i < searchBarPlaceholder.length; i++) {
-        console.log("Hello?");
-        searchBarPlaceholder[i].style.setProperty('--placeholder-color', searchBarPlaceholderColors[themeIndex]);
-    }*/
-    root.style.setProperty("--test", searchBarPlaceholderColors[themeIndex]);
+    root.style.setProperty("--search-bar-background-color", searchBarBackgroundColors[themeIndex]);
+    root.style.setProperty("--input-text-color", searchBarTextColors[themeIndex]);
+    root.style.setProperty("--placeholder-text-color", searchBarPlaceholderColors[themeIndex]);
+
     // Change the results box colors
-    resultsBox.style.backgroundColor = resultsBoxBackgroundColors[themeIndex];
+    root.style.setProperty("--results-box-background-color", resultsBoxBackgroundColors[themeIndex]);
+    root.style.setProperty("--paragraph-color", resultsBoxTextColors[themeIndex]);
+    root.style.setProperty("--link-color", resultsBoxLinkColors[themeIndex]);
 
-    for (let i = 0; i < resultsBoxText.length; i++)
-        resultsBoxText[i].style.color = resultsBoxTextColors[themeIndex];
+    // Change the theme button colors
+    changeThemeButton(cloud, cloudHoveredColors, cloudUnhoveredColors);
+    changeThemeButton(moon, moonHoveredColors, moonUnhoveredColors);
+}
 
-    for (let i = 0; i < resultsBoxLink.length; i++)
-        resultsBoxLink[i].style.color = resultsBoxLinkColors[themeIndex];
+/**
+ * Changes a theme button's color to align with a specified theme.
+ *
+ * @param {Object} button          The theme button to change.
+ *
+ * @param {Object} hoveredColors   An array of colors that are used to indicate that button is being hovered over.
+ *
+ * @param {Object} unhoveredColors An array of colors that are used to indicate that button is not being hovered over.
+ *
+ * @return {void}                  changeThemeButton does not return a value, however the color of button may be
+ *                                 changed.
+ *
+ * Time complexity: O(1);          changeThemeButton seems to execute a set number of instructions, regardless of the
+ *                                 input size. hoveredColors and unhoveredColors are arrays, so I will assume that
+ *                                 randomly accessing their elements will take a time complexity of O(1).
+ *
+ * Space complexity: O(1);         The only addition to the call stack would be the initial function call to
+ *                                 changeThemeButton itself.
+ */
+function changeThemeButton(button, hoveredColors, unhoveredColors) {
+    // Keep the button "hovered over" if the user's cursor is still on the button
+    if (button.matches(":hover"))
+        button.setAttribute("src", hoveredColors[themeIndex]);
 
-    // Change the theme menu colors. Keep a button "hovered over" if the user's cursor is still on the button
-    if (cloud.matches(":hover"))
-        cloud.setAttribute("src", cloudHoveredColors[themeIndex]);
+    // Otherwise, set the button to its "unhovered" color
     else
-        cloud.setAttribute("src", cloudUnhoveredColors[themeIndex]);
-
-    if (moon.matches(":hover"))
-        moon.setAttribute("src", moonHoveredColors[themeIndex]);
-    else
-        moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
+        button.setAttribute("src", unhoveredColors[themeIndex]);
 }
 
 /**
