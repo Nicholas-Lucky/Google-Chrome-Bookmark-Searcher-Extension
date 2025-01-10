@@ -301,7 +301,7 @@ async function getParentFolders(bookmarkNode) {
 // Mainly for testing in the DevTools console
 console.log("------------------ EXTENSION CONSOLE ------------------");
 
-// Default theme the extension is in (0 = sky, 1 = night)
+// Default theme the extension is in (0 = sky, 1 = night, 2 = beach)
 // Currently set to currentTheme = "sky" and themeIndex = 0 by default
 let currentTheme = "sky";
 let themeIndex = 0;
@@ -313,43 +313,55 @@ loadSavedTheme();
  * if we are in the middle of changing the extension theme */
 let themeIsChanging = false;
 
-// Array to house the theme backgrounds: [skyColor, nightColor]
-let themeBackgrounds = ["url('backgrounds/sky.png')", "url('backgrounds/night.png')"];
+// Array to house the theme backgrounds: [skyColor, nightColor, beachColor]
+let themeBackgrounds = ["url('backgrounds/sky.png')",
+                                 "url('backgrounds/night.png')",
+                                 "url('backgrounds/beach.png')"];
 
-// Arrays to house the button colors: [skyColor, nightColor]
-let cloudHoveredColors = ["buttons/cloud-sky-hovered.png", "buttons/cloud-night-hovered.png"];
-let cloudUnhoveredColors = ["buttons/cloud-sky.png", "buttons/cloud-night.png"];
-let moonHoveredColors = ["buttons/moon-sky-hovered.png", "buttons/moon-night-hovered.png"];
-let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png"];
+// Arrays to house the button colors: [skyColor, nightColor, beachColor]
+let cloudHoveredColors = ["buttons/cloud-sky-hovered.png", "buttons/cloud-night-hovered.png", "buttons/cloud-beach-hovered.png"];
+let cloudUnhoveredColors = ["buttons/cloud-sky.png", "buttons/cloud-night.png", "buttons/cloud-beach.png"];
 
-// Array to house the colors used for the search bar: [skyColor, nightColor]
-let searchBarBackgroundColors = ["#e9f5f2", "#3f5975"];
-let searchBarTextColors = ["#324d47", "#a2bde0"];
-let searchBarPlaceholderColors = ["#8b9492", "#8197b3"];
+let moonHoveredColors = ["buttons/moon-sky-hovered.png", "buttons/moon-night-hovered.png", "buttons/moon-beach-hovered.png"];
+let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png", "buttons/moon-beach.png"];
 
-// Arrays to house the colors used for the results box: [skyColor, nightColor]
-let resultsBoxBackgroundColors = ["#badbd4", "#1d2732"];
-let resultsBoxTextColors = ["#324d47", "#d6cab2"];
-let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0"];
+let sandcastleHoveredColors = ["buttons/sandcastle-sky-hovered.png", "buttons/sandcastle-night-hovered.png", "buttons/sandcastle-beach-hovered.png"];
+let sandcastleUnhoveredColors = ["buttons/sandcastle-sky.png", "buttons/sandcastle-night.png", "buttons/sandcastle-beach.png"];
 
-// Array to house the colors used for text selection/highlighting: [skyColor, nightColor]
-let selectionTextColors = ["#f5fffd", "#e3f0ff"];
-let selectionBackgroundColors = ["#7a9993", "#35485c"];
+// Array to house the colors used for the search bar: [skyColor, nightColor, beachColor]
+let searchBarBackgroundColors = ["#e9f5f2", "#3f5975", "#fffbf2"];
+let searchBarTextColors = ["#324d47", "#a2bde0", "#a19c8c"];
+let searchBarPlaceholderColors = ["#8b9492", "#8197b3", "#c4bfb1"];
+
+// Arrays to house the colors used for the results box: [skyColor, nightColor, beachColor]
+let resultsBoxBackgroundColors = ["#badbd4", "#1d2732", "#e8dab5"];
+let resultsBoxTextColors = ["#324d47", "#d6cab2", "#47443b"];
+let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0", "#7a6a45"];
+
+// Array to house the colors used for text selection/highlighting: [skyColor, nightColor, beachColor]
+let selectionTextColors = ["#f5fffd", "#e3f0ff", "#fffbf0"];
+let selectionBackgroundColors = ["#7a9993", "#35485c", "#9c937e"];
 
 // Get the relevant elements
 const cloud = document.getElementById("cloud");
 const moon = document.getElementById("moon");
+const sandcastle = document.getElementById("sandcastle");
 const root = document.querySelector(":root");
 
 // Add Event Listeners for when the theme buttons are hovered over/unhovered
 cloud.addEventListener("mouseover", hoverCloud);
 cloud.addEventListener("mouseout", unhoverCloud);
+
 moon.addEventListener("mouseover", hoverMoon);
 moon.addEventListener("mouseout", unhoverMoon);
+
+sandcastle.addEventListener("mouseover", hoverSandcastle);
+sandcastle.addEventListener("mouseout", unhoverSandcastle);
 
 // Add Event Listeners for when the theme buttons are clicked on
 cloud.addEventListener("click", skyTheme);
 moon.addEventListener("click", nightTheme);
+sandcastle.addEventListener("click", beachTheme);
 
 /**
  * Loads a saved theme (stored in chrome's local storage) to the extension. Currently, we use loadSavedTheme
@@ -453,6 +465,16 @@ function unhoverMoon() {
     moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
 }
 
+function hoverSandcastle() {
+    // themeIndex will determine the theme color we want our button to have
+    sandcastle.setAttribute("src", sandcastleHoveredColors[themeIndex]);
+}
+
+function unhoverSandcastle() {
+    // themeIndex will determine the theme color we want our button to have
+    sandcastle.setAttribute("src", sandcastleUnhoveredColors[themeIndex]);
+}
+
 /**
  * Changes the color palette of the extension to align with the sky theme.
  *
@@ -513,12 +535,30 @@ async function nightTheme() {
     }
 }
 
+async function beachTheme() {
+    // Do nothing if the extension is already in beach theme, or if another theme change is taking place at this moment
+    if ((currentTheme !== "beach") && (!themeIsChanging)) {
+        // Signify that the theme will be changing
+        themeIsChanging = true;
+
+        // Update the theme information to "night"
+        await updateThemeInfo("beach", 2);
+
+        // Switch to night theme
+        changeTheme(themeIndex);
+
+        // Signify that the theme-change is done
+        themeIsChanging = false;
+    }
+}
+
 /**
  * Changes every element's color in the extension to align with a specified theme.
  *
  * @param {Number} themeIndex An index specifying the theme the extension to be in.
  *                                0: Sky
  *                                1: Night
+ *                                2: Beach
  *
  * @return {void}             changeTheme does not return a value, however many of the elements on the extension
  *                            may be changed by a color switch.
@@ -553,6 +593,7 @@ function changeTheme(themeIndex) {
     // Change the theme button colors
     changeThemeButton(cloud, cloudHoveredColors, cloudUnhoveredColors);
     changeThemeButton(moon, moonHoveredColors, moonUnhoveredColors);
+    changeThemeButton(sandcastle, sandcastleHoveredColors, sandcastleUnhoveredColors);
 }
 
 /**
@@ -593,6 +634,7 @@ function changeThemeButton(button, hoveredColors, unhoveredColors) {
  * @param {Number} newThemeIndex The new theme index that specifies the extension's theme.
  *                               0: Sky
  *                               1: Night
+ *                               2: Beach
  *
  * @return {Promise <void>}      updateThemeInfo does not return a value, however currentTheme, themeIndex, and
  *                               chrome's local storage may be mutated. updateThemeInfo is an asynchronous (async)
