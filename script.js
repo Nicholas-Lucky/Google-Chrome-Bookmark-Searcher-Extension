@@ -343,7 +343,7 @@ let sandcastleUnhoveredColors = ["buttons/sandcastle-sky.png",
                                  "buttons/sandcastle-night.png",
                                  "buttons/sandcastle-beach.png"];
 
-// Array to house the colors used for the search bar: [skyColor, nightColor, beachColor]
+// Arrays to house the colors used for the search bar: [skyColor, nightColor, beachColor]
 let searchBarBackgroundColors = ["#e9f5f2", "#3f5975", "#fffbf2"];
 let searchBarTextColors = ["#324d47", "#a2bde0", "#a19c8c"];
 let searchBarPlaceholderColors = ["#8b9492", "#8197b3", "#c4bfb1"];
@@ -353,9 +353,13 @@ let resultsBoxBackgroundColors = ["#badbd4", "#1d2732", "#e8dab5"];
 let resultsBoxTextColors = ["#324d47", "#d6cab2", "#47443b"];
 let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0", "#7a6a45"];
 
-// Array to house the colors used for text selection/highlighting: [skyColor, nightColor, beachColor]
+// Arrays to house the colors used for text selection/highlighting: [skyColor, nightColor, beachColor]
 let selectionTextColors = ["#f5fffd", "#e3f0ff", "#fffbf0"];
 let selectionBackgroundColors = ["#7a9993", "#35485c", "#9c937e"];
+
+// Arrays to house the colors used for the scrollbar in the results box: [skyColor, nightColor, beachColor]
+let scrollbarThumbColors = ["#87a19c", "#48617d", "#a89e83"];
+let scrollbarTrackColors = ["#abc9c3", "#253240", "#d6c8a7"];
 
 // Get the relevant elements
 const cloud = document.getElementById("cloud");
@@ -641,6 +645,10 @@ function changeTheme(themeIndex) {
     // Change the text selection colors
     root.style.setProperty("--selection-text-color", selectionTextColors[themeIndex]);
     root.style.setProperty("--selection-background-color", selectionBackgroundColors[themeIndex]);
+
+    // Change the scrollbar colors
+    root.style.setProperty("--scrollbar-thumb-color", scrollbarThumbColors[themeIndex]);
+    root.style.setProperty("--scrollbar-track-color", scrollbarTrackColors[themeIndex]);
 
     // Change the theme button colors
     changeThemeButton(cloud, cloudHoveredColors, cloudUnhoveredColors);
