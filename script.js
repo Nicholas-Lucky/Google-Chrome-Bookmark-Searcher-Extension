@@ -315,18 +315,33 @@ let themeIsChanging = false;
 
 // Array to house the theme backgrounds: [skyColor, nightColor, beachColor]
 let themeBackgrounds = ["url('backgrounds/sky.png')",
-                                 "url('backgrounds/night.png')",
-                                 "url('backgrounds/beach.png')"];
+                        "url('backgrounds/night.png')",
+                        "url('backgrounds/beach.png')"];
 
 // Arrays to house the button colors: [skyColor, nightColor, beachColor]
-let cloudHoveredColors = ["buttons/cloud-sky-hovered.png", "buttons/cloud-night-hovered.png", "buttons/cloud-beach-hovered.png"];
-let cloudUnhoveredColors = ["buttons/cloud-sky.png", "buttons/cloud-night.png", "buttons/cloud-beach.png"];
+let cloudHoveredColors = ["buttons/cloud-sky-hovered.png",
+                          "buttons/cloud-night-hovered.png",
+                          "buttons/cloud-beach-hovered.png"];
 
-let moonHoveredColors = ["buttons/moon-sky-hovered.png", "buttons/moon-night-hovered.png", "buttons/moon-beach-hovered.png"];
-let moonUnhoveredColors = ["buttons/moon-sky.png", "buttons/moon-night.png", "buttons/moon-beach.png"];
+let cloudUnhoveredColors = ["buttons/cloud-sky.png",
+                            "buttons/cloud-night.png",
+                            "buttons/cloud-beach.png"];
 
-let sandcastleHoveredColors = ["buttons/sandcastle-sky-hovered.png", "buttons/sandcastle-night-hovered.png", "buttons/sandcastle-beach-hovered.png"];
-let sandcastleUnhoveredColors = ["buttons/sandcastle-sky.png", "buttons/sandcastle-night.png", "buttons/sandcastle-beach.png"];
+let moonHoveredColors = ["buttons/moon-sky-hovered.png",
+                         "buttons/moon-night-hovered.png",
+                         "buttons/moon-beach-hovered.png"];
+
+let moonUnhoveredColors = ["buttons/moon-sky.png",
+                           "buttons/moon-night.png",
+                           "buttons/moon-beach.png"];
+
+let sandcastleHoveredColors = ["buttons/sandcastle-sky-hovered.png",
+                               "buttons/sandcastle-night-hovered.png",
+                               "buttons/sandcastle-beach-hovered.png"];
+
+let sandcastleUnhoveredColors = ["buttons/sandcastle-sky.png",
+                                 "buttons/sandcastle-night.png",
+                                 "buttons/sandcastle-beach.png"];
 
 // Array to house the colors used for the search bar: [skyColor, nightColor, beachColor]
 let searchBarBackgroundColors = ["#e9f5f2", "#3f5975", "#fffbf2"];
@@ -465,11 +480,35 @@ function unhoverMoon() {
     moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
 }
 
+/**
+ * Changes the image of the sandcastle button to show that it is being hovered over.
+ *
+ *                         hoverSandcastle does not have any parameters.
+ *
+ * @return {void}          hoverSandcastle does not return a value, however sandcastle will be changed.
+ *
+ * Time complexity: O(1);  hoverSandcastle only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); hoverSandcastle does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to hoverSandcastle itself.
+ */
 function hoverSandcastle() {
     // themeIndex will determine the theme color we want our button to have
     sandcastle.setAttribute("src", sandcastleHoveredColors[themeIndex]);
 }
 
+/**
+ * Changes the image of the sandcastle button to show that it is not/no longer being hovered over.
+ *
+ *                         unhoverSandcastle does not have any parameters.
+ *
+ * @return {void}          unhoverSandcastle does not return a value, however sandcastle will be changed.
+ *
+ * Time complexity: O(1);  unhoverSandcastle only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); unhoverSandcastle does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to unhoverSandcastle itself.
+ */
 function unhoverSandcastle() {
     // themeIndex will determine the theme color we want our button to have
     sandcastle.setAttribute("src", sandcastleUnhoveredColors[themeIndex]);
@@ -535,6 +574,19 @@ async function nightTheme() {
     }
 }
 
+/**
+ * Changes the color palette of the extension to align with the beach theme.
+ *
+ *                         beachTheme does not have any parameters.
+ *
+ * @return {void}          beachTheme does not return a value, however many of the elements on the extension
+ *                         may be changed by a color switch.
+ *
+ * Time complexity: O(n);  n = # of saved bookmarks
+ *                         beachTheme calls changeTheme, which itself has a time complexity of O(n) currently.
+ *
+ * Space complexity: O(1); beachTheme calls changeTheme, which itself has a space complexity of O(1) currently.
+ */
 async function beachTheme() {
     // Do nothing if the extension is already in beach theme, or if another theme change is taking place at this moment
     if ((currentTheme !== "beach") && (!themeIsChanging)) {
