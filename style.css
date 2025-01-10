@@ -1,3 +1,7 @@
+/* Note: Most (if not all) of the colors in this file for the extension elements will align with the
+ * sky theme by default. These colors can be changed depending on the theme the extension is in
+ * (sky, night, beach, etc.), which is currently done in script.js */
+
 /* Variables to store the colors of the extension's elements; can be accessed and changed in script.js */
 :root {
     /* Color of the search bar background */
@@ -23,6 +27,12 @@
 
     /* Color of the background around a text when the user selects it */
     --selection-background-color: #7a9993;
+
+    /* Color of the scrollbar thumb (the part of the scrollbar the user can click and drag)*/
+    --scrollbar-thumb-color: #87a19c;
+
+    /* Color of the scrollbar track (the "background" of the scrollbar sort of)*/
+    --scrollbar-track-color: #abc9c3;
 }
 
 /* Extension window and background */
@@ -82,6 +92,7 @@ input::placeholder {
     overflow-y: auto;
 
     /* scrollbar-color: thumbColor trackColor*/
+    scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
 }
 
 /* Text to display the bookmark results */
