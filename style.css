@@ -80,6 +80,8 @@ input::placeholder {
 
     background-color: var(--results-box-background-color);
     overflow-y: auto;
+
+    /* scrollbar-color: thumbColor trackColor*/
 }
 
 /* Text to display the bookmark results */
@@ -101,7 +103,7 @@ a {
 
     position: fixed;
     bottom: 15px;
-    right: 50px;
+    right: 85px;
 
     border: none;
     border-radius: 7px;
@@ -109,6 +111,20 @@ a {
 
 /* Moon Button */
 #theme-button-2 {
+    /* Button image will be 25px x 25px */
+    width: 25px;
+    height: 25px;
+
+    position: fixed;
+    bottom: 15px;
+    right: 50px;
+
+    border: none;
+    border-radius: 7px;
+}
+
+/* Sandcastle Button */
+#theme-button-3 {
     /* Button image will be 25px x 25px */
     width: 25px;
     height: 25px;
