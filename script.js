@@ -320,45 +320,45 @@ let themeBackgrounds = ["url('backgrounds/sky.png')",
                         "url('backgrounds/forest.png')"];
 
 // Arrays to house the button colors: [skyColor, nightColor, beachColor, forestColor]
-let cloudHoveredColors = ["buttons/cloud-sky-hovered.png",
-                          "buttons/cloud-night-hovered.png",
-                          "buttons/cloud-beach-hovered.png",
-                          "buttons/cloud-forest-hovered.png"];
+let cloudHoveredColors = ["buttons/cloud/cloud-sky-hovered.png",
+                          "buttons/cloud/cloud-night-hovered.png",
+                          "buttons/cloud/cloud-beach-hovered.png",
+                          "buttons/cloud/cloud-forest-hovered.png"];
 
-let cloudUnhoveredColors = ["buttons/cloud-sky.png",
-                            "buttons/cloud-night.png",
-                            "buttons/cloud-beach.png",
-                            "buttons/cloud-forest.png"];
+let cloudUnhoveredColors = ["buttons/cloud/cloud-sky.png",
+                            "buttons/cloud/cloud-night.png",
+                            "buttons/cloud/cloud-beach.png",
+                            "buttons/cloud/cloud-forest.png"];
 
-let moonHoveredColors = ["buttons/moon-sky-hovered.png",
-                         "buttons/moon-night-hovered.png",
-                         "buttons/moon-beach-hovered.png",
-                         "buttons/moon-forest-hovered.png"];
+let moonHoveredColors = ["buttons/moon/moon-sky-hovered.png",
+                         "buttons/moon/moon-night-hovered.png",
+                         "buttons/moon/moon-beach-hovered.png",
+                         "buttons/moon/moon-forest-hovered.png"];
 
-let moonUnhoveredColors = ["buttons/moon-sky.png",
-                           "buttons/moon-night.png",
-                           "buttons/moon-beach.png",
-                           "buttons/moon-forest.png"];
+let moonUnhoveredColors = ["buttons/moon/moon-sky.png",
+                           "buttons/moon/moon-night.png",
+                           "buttons/moon/moon-beach.png",
+                           "buttons/moon/moon-forest.png"];
 
-let sandcastleHoveredColors = ["buttons/sandcastle-sky-hovered.png",
-                               "buttons/sandcastle-night-hovered.png",
-                               "buttons/sandcastle-beach-hovered.png",
-                               "buttons/sandcastle-forest-hovered.png"];
+let sandcastleHoveredColors = ["buttons/sandcastle/sandcastle-sky-hovered.png",
+                               "buttons/sandcastle/sandcastle-night-hovered.png",
+                               "buttons/sandcastle/sandcastle-beach-hovered.png",
+                               "buttons/sandcastle/sandcastle-forest-hovered.png"];
 
-let sandcastleUnhoveredColors = ["buttons/sandcastle-sky.png",
-                                 "buttons/sandcastle-night.png",
-                                 "buttons/sandcastle-beach.png",
-                                 "buttons/sandcastle-forest.png"];
+let sandcastleUnhoveredColors = ["buttons/sandcastle/sandcastle-sky.png",
+                                 "buttons/sandcastle/sandcastle-night.png",
+                                 "buttons/sandcastle/sandcastle-beach.png",
+                                 "buttons/sandcastle/sandcastle-forest.png"];
 
-let treeHoveredColors = ["buttons/tree-sky-hovered.png",
-                         "buttons/tree-night-hovered.png",
-                         "buttons/tree-beach-hovered.png",
-                         "buttons/tree-forest-hovered.png"];
+let treeHoveredColors = ["buttons/tree/tree-sky-hovered.png",
+                         "buttons/tree/tree-night-hovered.png",
+                         "buttons/tree/tree-beach-hovered.png",
+                         "buttons/tree/tree-forest-hovered.png"];
 
-let treeUnhoveredColors = ["buttons/tree-sky.png",
-                           "buttons/tree-night.png",
-                           "buttons/tree-beach.png",
-                           "buttons/tree-forest.png"];
+let treeUnhoveredColors = ["buttons/tree/tree-sky.png",
+                           "buttons/tree/tree-night.png",
+                           "buttons/tree/tree-beach.png",
+                           "buttons/tree/tree-forest.png"];
 
 // Arrays to house the colors used for the search bar: [skyColor, nightColor, beachColor, forestColor]
 let searchBarBackgroundColors = ["#e9f5f2", "#3f5975", "#fffbf2", "#e6f2ec"];
