@@ -115,7 +115,7 @@ a {
     /* 35px from a button to the left or right */
     position: fixed;
     bottom: 15px;
-    right: 120px;
+    right: 155px;
 
     border: none;
     border-radius: 7px;
@@ -130,7 +130,7 @@ a {
     /* 35px from a button to the left or right */
     position: fixed;
     bottom: 15px;
-    right: 85px;
+    right: 120px;
 
     border: none;
     border-radius: 7px;
@@ -145,7 +145,7 @@ a {
     /* 35px from a button to the left or right */
     position: fixed;
     bottom: 15px;
-    right: 50px;
+    right: 85px;
 
     border: none;
     border-radius: 7px;
@@ -153,6 +153,21 @@ a {
 
 /* Tree Button */
 #theme-button-4 {
+    /* Button image will be 25px x 25px */
+    width: 25px;
+    height: 25px;
+
+    /* 35px from a button to the left or right */
+    position: fixed;
+    bottom: 15px;
+    right: 50px;
+
+    border: none;
+    border-radius: 7px;
+}
+
+/* Pencil Button */
+#theme-button-5 {
     /* Button image will be 25px x 25px */
     width: 25px;
     height: 25px;
