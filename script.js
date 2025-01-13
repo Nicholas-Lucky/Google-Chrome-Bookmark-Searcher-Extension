@@ -382,22 +382,22 @@ let pencilUnhoveredColors = ["buttons/pencil/pencil-sky.png",
                              "buttons/pencil/pencil-stationary.png"];
 
 // Arrays to house the colors used for the search bar: [skyColor, nightColor, beachColor, forestColor, stationaryColor]
-let searchBarBackgroundColors = ["#e9f5f2", "#3f5975", "#fffbf2", "#e6f2ec", "#ffdeed"];
-let searchBarTextColors = ["#324d47", "#a2bde0", "#a19c8c", "#7d8c84", "#c499ad"];
-let searchBarPlaceholderColors = ["#8b9492", "#8197b3", "#c4bfb1", "#a1ada7", "#ccb6c0"];
+let searchBarBackgroundColors = ["#e9f5f2", "#3f5975", "#fffbf2", "#e6f2ec", "#fff5f9"];
+let searchBarTextColors = ["#324d47", "#a2bde0", "#a19c8c", "#7d8c84", "#9e7b8b"];
+let searchBarPlaceholderColors = ["#8b9492", "#8197b3", "#c4bfb1", "#a1ada7", "#bfaab4"];
 
 // Arrays to house the colors used for the results box: [skyColor, nightColor, beachColor, forestColor, stationaryColor]
-let resultsBoxBackgroundColors = ["#badbd4", "#1d2732", "#e8dab5", "#7b8f83", "#c2acb6"];
-let resultsBoxTextColors = ["#324d47", "#d6cab2", "#47443b", "#222b26", "#78636d"];
-let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0", "#7a6a45", "#395747", "#754f60"];
+let resultsBoxBackgroundColors = ["#badbd4", "#1d2732", "#e8dab5", "#7b8f83", "#e0c8d3"];
+let resultsBoxTextColors = ["#324d47", "#d6cab2", "#47443b", "#222b26", "#705d66"];
+let resultsBoxLinkColors = ["#3e7a74", "#ffdfa0", "#7a6a45", "#395747", "#8c4967"];
 
 // Arrays to house the colors used for text selection/highlighting: [skyColor, nightColor, beachColor, forestColor, stationaryColor]
 let selectionTextColors = ["#f5fffd", "#e3f0ff", "#fffbf0", "#f2fff8", "#fff2f8"];
-let selectionBackgroundColors = ["#7a9993", "#35485c", "#9c937e", "#6b7d74", "#8c7982"];
+let selectionBackgroundColors = ["#7a9993", "#35485c", "#9c937e", "#6b7d74", "#9c8691"];
 
 // Arrays to house the colors used for the scrollbar in the results box: [skyColor, nightColor, beachColor, forestColor, stationaryColor]
-let scrollbarThumbColors = ["#87a19c", "#48617d", "#a89e83", "#56635b", "#8c7b83"];
-let scrollbarTrackColors = ["#abc9c3", "#253240", "#d6c8a7", "#6e8075", "#a6949c"];
+let scrollbarThumbColors = ["#87a19c", "#48617d", "#a89e83", "#56635b", "#9c8a92"];
+let scrollbarTrackColors = ["#abc9c3", "#253240", "#d6c8a7", "#6e8075", "#ccb6c0"];
 
 // Get the relevant elements
 const cloud = document.getElementById("cloud");
@@ -458,7 +458,7 @@ async function loadSavedTheme() {
 
     // Mainly for testing in the DevTools console
     console.log(`\tcurrentTheme: ${currentTheme}`);
-    console.log(`\tthemeIndex: ${themeIndex}`);
+    console.log(`\tthemeIndex: ${themeIndex}\n`);
 
     // Load the saved theme into the extension
     keepTheme();
@@ -479,6 +479,7 @@ async function loadSavedTheme() {
 function hoverCloud() {
     // themeIndex will determine the theme color we want our button to have
     cloud.setAttribute("src", cloudHoveredColors[themeIndex]);
+    console.log("Cloud button is hovered over...");
 }
 
 /**
@@ -496,6 +497,7 @@ function hoverCloud() {
 function unhoverCloud() {
     // themeIndex will determine the theme color we want our button to have
     cloud.setAttribute("src", cloudUnhoveredColors[themeIndex]);
+    console.log("Cloud button is no longer hovered over...");
 }
 
 /**
@@ -513,6 +515,7 @@ function unhoverCloud() {
 function hoverMoon() {
     // themeIndex will determine the theme color we want our button to have
     moon.setAttribute("src", moonHoveredColors[themeIndex]);
+    console.log("Moon button is hovered over...");
 }
 
 /**
@@ -530,6 +533,7 @@ function hoverMoon() {
 function unhoverMoon() {
     // themeIndex will determine the theme color we want our button to have
     moon.setAttribute("src", moonUnhoveredColors[themeIndex]);
+    console.log("Moon button is no longer hovered over...");
 }
 
 /**
@@ -547,6 +551,7 @@ function unhoverMoon() {
 function hoverSandcastle() {
     // themeIndex will determine the theme color we want our button to have
     sandcastle.setAttribute("src", sandcastleHoveredColors[themeIndex]);
+    console.log("Sandcastle button is hovered over...");
 }
 
 /**
@@ -564,6 +569,7 @@ function hoverSandcastle() {
 function unhoverSandcastle() {
     // themeIndex will determine the theme color we want our button to have
     sandcastle.setAttribute("src", sandcastleUnhoveredColors[themeIndex]);
+    console.log("Sandcastle button is no longer hovered over...");
 }
 
 /**
@@ -581,6 +587,7 @@ function unhoverSandcastle() {
 function hoverTree() {
     // themeIndex will determine the theme color we want our button to have
     tree.setAttribute("src", treeHoveredColors[themeIndex]);
+    console.log("Tree button is hovered over...");
 }
 
 /**
@@ -598,16 +605,43 @@ function hoverTree() {
 function unhoverTree() {
     // themeIndex will determine the theme color we want our button to have
     tree.setAttribute("src", treeUnhoveredColors[themeIndex]);
+    console.log("Tree button is no longer hovered over...");
 }
 
+/**
+ * Changes the image of the pencil button to show that it is being hovered over.
+ *
+ *                         hoverPencil does not have any parameters.
+ *
+ * @return {void}          hoverPencil does not return a value, however pencil will be changed.
+ *
+ * Time complexity: O(1);  hoverPencil only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); hoverPencil does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to hoverPencil itself.
+ */
 function hoverPencil() {
     // themeIndex will determine the theme color we want our button to have
     pencil.setAttribute("src", pencilHoveredColors[themeIndex]);
+    console.log("Pencil button is hovered over...");
 }
 
+/**
+ * Changes the image of the pencil button to show that it is not/no longer being hovered over.
+ *
+ *                         unhoverPencil does not have any parameters.
+ *
+ * @return {void}          unhoverPencil does not return a value, however pencil will be changed.
+ *
+ * Time complexity: O(1);  unhoverPencil only calls JavaScript's setAttribute function once.
+ *
+ * Space complexity: O(1); unhoverPencil does not call any other functions, so the only addition to the
+ *                         call stack would be the initial function call to unhoverPencil itself.
+ */
 function unhoverPencil() {
     // themeIndex will determine the theme color we want our button to have
     pencil.setAttribute("src", pencilUnhoveredColors[themeIndex]);
+    console.log("Pencil button is no longer hovered over...");
 }
 
 /**
@@ -628,6 +662,7 @@ async function skyTheme() {
     if ((currentTheme !== "sky") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
+        console.log("Changing theme to sky...");
 
         // Update the theme information to "sky"
         await updateThemeInfo("sky", 0);
@@ -637,6 +672,7 @@ async function skyTheme() {
 
         // Signify that the theme-change is done
         themeIsChanging = false;
+        console.log("Theme has been successfully changed to sky\n");
     }
 }
 
@@ -658,6 +694,7 @@ async function nightTheme() {
     if ((currentTheme !== "night") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
+        console.log("Changing theme to night...");
 
         // Update the theme information to "night"
         await updateThemeInfo("night", 1);
@@ -667,6 +704,7 @@ async function nightTheme() {
 
         // Signify that the theme-change is done
         themeIsChanging = false;
+        console.log("Theme has been successfully changed to night\n");
     }
 }
 
@@ -688,6 +726,7 @@ async function beachTheme() {
     if ((currentTheme !== "beach") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
+        console.log("Changing theme to beach...");
 
         // Update the theme information to "beach"
         await updateThemeInfo("beach", 2);
@@ -697,6 +736,7 @@ async function beachTheme() {
 
         // Signify that the theme-change is done
         themeIsChanging = false;
+        console.log("Theme has been successfully changed to beach\n");
     }
 }
 
@@ -718,6 +758,7 @@ async function forestTheme() {
     if ((currentTheme !== "forest") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
+        console.log("Changing theme to forest...");
 
         // Update the theme information to "forest"
         await updateThemeInfo("forest", 3);
@@ -727,16 +768,31 @@ async function forestTheme() {
 
         // Signify that the theme-change is done
         themeIsChanging = false;
+        console.log("Theme has been successfully changed to forest\n");
     }
 }
 
+/**
+ * Changes the color palette of the extension to align with the stationary theme.
+ *
+ *                         stationaryTheme does not have any parameters.
+ *
+ * @return {void}          stationaryTheme does not return a value, however many of the elements on the extension
+ *                         may be changed by a color switch.
+ *
+ * Time complexity: O(n);  n = # of saved bookmarks
+ *                         stationaryTheme calls changeTheme, which itself has a time complexity of O(n) currently.
+ *
+ * Space complexity: O(1); stationaryTheme calls changeTheme, which itself has a space complexity of O(1) currently.
+ */
 async function stationaryTheme() {
     // Do nothing if the extension is already in beach theme, or if another theme change is taking place at this moment
     if ((currentTheme !== "stationary") && (!themeIsChanging)) {
         // Signify that the theme will be changing
         themeIsChanging = true;
+        console.log("Changing theme to stationary...");
 
-        // Update the theme information to "forest"
+        // Update the theme information to "stationary"
         await updateThemeInfo("stationary", 4);
 
         // Switch to night theme
@@ -744,6 +800,7 @@ async function stationaryTheme() {
 
         // Signify that the theme-change is done
         themeIsChanging = false;
+        console.log("Theme has been successfully changed to stationary\n");
     }
 }
 
@@ -860,6 +917,11 @@ async function updateThemeInfo(newTheme, newThemeIndex) {
      * storage to keep the most recent theme the extension was in */
     await chrome.storage.local.set({currentTheme: newTheme});
     await chrome.storage.local.set({themeIndex: newThemeIndex});
+
+    // Mainly for testing in the DevTools console
+    console.log("chrome's local storage has been updated to:")
+    console.log(`\tcurrentTheme: ${currentTheme}`);
+    console.log(`\tthemeIndex: ${themeIndex}\n`);
 }
 
 /**
