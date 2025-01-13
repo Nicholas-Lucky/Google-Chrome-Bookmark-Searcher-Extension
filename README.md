@@ -1,6 +1,6 @@
 # Bookmark Searcher Extension (Google Chrome)
 An extension to look up saved bookmarks (coded for Google Chrome)
-Started: December 27th, 2024
+   Started: December 27th, 2024
 
 # Overview
 This extension allows users to search for specific bookmarks they have saved on their Google Chrome browser. The extension will take in a user input, and will retrieve bookmarks that contain the user's input in their titles (not their URLs). There are also five themes to choose from (via button icons on the bottom-right of the extension window), which change the background and color palette of the extension.
