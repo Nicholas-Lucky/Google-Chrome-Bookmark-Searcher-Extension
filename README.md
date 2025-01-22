@@ -92,7 +92,7 @@ JavaScript Change an img src (W3Schools): https://www.w3schools.com/jsref/prop_i
 
 JavaScript Change Text Color: https://www.w3schools.com/jsref/prop_style_color.asp;
 
-JavaScript Get Search Bar: "javascript get search bar element" into Google (Google AI)
+JavaScript Get Search Bar: https://stackoverflow.com/questions/56346257/how-to-select-the-google-search-bar-using-javascript
 
 JavaScript querySelector: https://www.w3schools.com/jsreF/met_document_queryselector.asp
 
