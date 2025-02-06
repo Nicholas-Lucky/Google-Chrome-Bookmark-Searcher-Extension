@@ -16,7 +16,7 @@ This extension allows users to search for specific bookmarks they have saved on 
 1. Download and get the "Google-Chrome-Bookmark-Searcher-Extension-main" folder (as explained in "Steps to Download This Extension")
 2. In Google Chrome, click on the three dots that appear on the top right of the window (under the close "X" button, to the right of the account profile picture)
 3. In the dropdown menu, click on "Extensions", and then click on "Manage Extensions"
-4. In the Extensions window, I think there is a switch on the top-right called "Developer mode". turn "Developer mode" on if it isn't already. This allows for users to upload their own extensions from their device to use on Google Chrome
+4. In the Extensions window, I think there is a switch on the top-right called "Developer mode". Turn "Developer mode" on if it isn't already. This allows users to upload their own extensions from their device to use on Google Chrome
 5. On the top-left of the Extensions window, under the "Extensions" heading, click on "Load unpacked"
 6. Select the "Google-Chrome-Bookmark-Searcher-Extension-main" folder, and click "Select Folder"
 7. The extension should be added to Google! (Note: By default, the extension is called "Bookmark Searcher", and its current version is 1.0)
